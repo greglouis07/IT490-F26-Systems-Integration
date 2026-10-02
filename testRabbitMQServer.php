@@ -30,7 +30,7 @@ function requestProcessor($request)
   return array("returnCode" => '0', 'message'=>"Server received request and processed");
 }
 
-$server = new rabbitMQServer("testRabbitMQ.ini","testServer");
+$server = new rabbitMQServer("githappensRabbitMQ.ini","testServer");
 
 echo "testRabbitMQServer BEGIN".PHP_EOL;
 $server->process_requests('requestProcessor');
