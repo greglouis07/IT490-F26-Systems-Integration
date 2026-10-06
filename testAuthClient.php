@@ -9,8 +9,8 @@ $client = new rabbitMQClient("githappensRabbitMQ.ini", "testServer");
 $tests = [
 	['type' => 'register', 'username' => 'testuser', 'password' => 'pass123'],
 	['type' => 'login', 'username' => 'testuser', 'password' => 'pass123'],
-	['type' => 'validate_session', 'sessionId' => 'fake123'],
-	['type' => 'logout', 'sessionId' => 'fake123'],
+	['type' => 'validate_session', 'sessionID' => 'fake123'],
+	['type' => 'logout', 'sessionID' => 'fake123'],
 	['type' => 'login', 'username' => 'testuser'],
 	['type' => 'nonsense'],
 ];
