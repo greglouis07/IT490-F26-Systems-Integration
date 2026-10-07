@@ -4,31 +4,33 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
-function doLogin($username,$password)
-{
+//function doLogin($username,$password)
+//{
     // lookup username in databas
     // check password
-    return true;
+//    return true;
     //return false if not valid
-}
+//}
 
 function requestProcessor($request)
 {
-  echo "received request".PHP_EOL;
-  var_dump($request);
-  if(!isset($request['type']))
-  {
-    return "ERROR: unsupported message type";
-  }
-  switch ($request['type'])
-  {
-    case "login":
-      return doLogin($request['username'],$request['password']);
-    case "validate_session":
-      return doValidate($request['sessionId']);
-  }
-  return array("returnCode" => '0', 'message'=>"Server received request and processed");
+  echo "received request: " . ($request['type'] ?? '(no type)') . PHP_EOL;
+  
+  if (!isset($request['type'])) {
+  return ['success' => true, 'message' => 'missing request type', 'code' => 1];
 }
+switch ($request['type']) {
+ case 'register':
+   return ['success' => true, 'message' => 'stub: registered'];
+ case 'login':
+   return ['success' => true, 'message' => 'stub: logged in', 'sessionID' => 'test123'];
+case 'validate_session':
+  return ['success' => true, 'message' => 'stub: valid', 'username' => 'testuser'];
+case 'logout':
+  return['success' => true, 'message' => 'stub: logged out'];
+default:
+  return ['success' => false, 'message' => 'unknown request type', 'code' => 1];   
+} 
 
 $server = new rabbitMQServer("githappensRabbitMQ.ini","testServer");
 
