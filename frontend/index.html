@@ -1,18 +1,126 @@
+
 <!DOCTYPE html>
-<html lang ="en"?
+<html lang="en">
 <head>
-<meta charset = "UTF-8">
-<meta name = "viewport" content = "width = device - width, initial-scale=1.0">
-<title>Git Happens </title>
-<link rel = "stylesheet" href = "style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Git Happens | Login</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1> This is our intitial login page.</h1>
+    <main class="auth-container">
+        <div class="auth-box">
 
-<script src = "script.js"></script?>
+            <h1>Git Happens</h1>
+            <p class="subtitle">Welcome to Git Happens!</p>
+
+            <!-- Login Section -->
+            <section id="login-section">
+                <h2>Login</h2>
+
+                <form id="login-form">
+
+                    <div class="input-group">
+                        <label for="login-username">Username</label>
+                        <input
+                            type="text"
+                            id="login-username"
+                            name="username"
+                            placeholder="Enter your username"
+                            autocomplete="username"
+                            required
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label for="login-password">Password</label>
+                        <input
+                            type="password"
+                            id="login-password"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="auth-button">
+                        Login
+                    </button>
+
+                </form>
+
+                <p class="switch-text">
+                    Don't have an account?
+                    <a href="#" id="show-register">Register here</a>
+                </p>
+            </section>
+
+            <!-- Registration Section -->
+            <section id="register-section" hidden>
+                <h2>Create an Account</h2>
+
+                <form id="register-form">
+
+                    <div class="input-group">
+                        <label for="register-username">Username</label>
+                        <input
+                            type="text"
+                            id="register-username"
+                            name="username"
+                            placeholder="Choose a username"
+                            autocomplete="username"
+                            required
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label for="register-password">Password</label>
+                        <input
+                            type="password"
+                            id="register-password"
+                            name="password"
+                            placeholder="Create a password"
+                            autocomplete="new-password"
+                            required
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input
+                            type="password"
+                            id="confirm-password"
+                            name="confirmPassword"
+                            placeholder="Confirm your password"
+                            autocomplete="new-password"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="auth-button">
+                        Register
+                    </button>
+
+                </form>
+
+                <p class="switch-text">
+                    Already have an account?
+                    <a href="#" id="show-login">Login here</a>
+                </p>
+            </section>
+
+            <!-- Authentication Messages -->
+            <p id="auth-message" role="status" aria-live="polite"></p>
+
+        </div>
+    </main>
+
+    <script src="script.js"></script>
 
 </body>
-
 </html>
