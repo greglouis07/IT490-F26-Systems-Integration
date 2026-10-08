@@ -4,11 +4,19 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
+$DB_HOST = "100.67.127.28";
+$DB_USER = "db";
+$DB_PASSWORD = "githappensdb";
+$DB_NAME = "db";
+$DB_PORT = 3306;
+
 function doLogin($username,$password)
 {
+    
+
     // lookup username in databas
     // check password
-    return true;
+    // return true;
     //return false if not valid
 }
 
