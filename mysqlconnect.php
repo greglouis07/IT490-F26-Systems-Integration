@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-$mydb = new mysqli('127.0.0.1','admin','12345','db');
+$mydb = new mysqli('127.0.0.1','admin','githappensdb','db');
 
 if ($mydb->errno != 0)
 {
@@ -11,7 +11,7 @@ if ($mydb->errno != 0)
 
 echo "successfully connected to database".PHP_EOL;
 
-$query = "select id, username, created_at from users;";
+$query = "select id, username, email, password, created_at from users;";
 
 $response = $mydb->query($query);
 if ($mydb->errno != 0)
