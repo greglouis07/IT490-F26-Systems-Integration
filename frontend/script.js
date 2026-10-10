@@ -1,7 +1,8 @@
 
 /*
 Git Happens - Frontend Authentication
-Handles login/register form switching and validation.
+Handles login/register switching, form validation,
+and communication with the PHP authentication endpoint.
 */
 
 // Get the login and registration sections
@@ -46,19 +47,54 @@ showLogin.addEventListener("click", function(event) {
 });
 
 // Handle login form submission
-loginForm.addEventListener("submit", function(event) {
+loginForm.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     const username = document.getElementById("login-username").value.trim();
     const password = document.getElementById("login-password").value;
 
+    // Check for empty fields
     if (!username || !password) {
         displayMessage("Please enter your username and password.", true);
         return;
     }
 
-    // Backend integration will be added later
-    displayMessage("Login form submitted. Backend connection is not set up yet.");
+    // Send login credentials to the PHP endpoint
+    displayMessage("Logging in...");
+
+    try {
+        const response = await fetch("auth.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                type: "login",
+                username: username,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            displayMessage(data.message || "Login successful!");
+
+            // Homepage navigation will be enabled after
+            // authentication and session handling are ready.
+
+        } else {
+            displayMessage(data.message || "Login failed.", true);
+        }
+
+    } catch (error) {
+        console.error("Login request failed:", error);
+
+        displayMessage(
+            "Unable to connect to the authentication service.",
+            true
+        );
+    }
 });
 
 // Handle registration form submission
@@ -69,6 +105,7 @@ registerForm.addEventListener("submit", function(event) {
     const password = document.getElementById("register-password").value;
     const confirmPassword = document.getElementById("confirm-password").value;
 
+    // Check for empty fields
     if (!username || !password || !confirmPassword) {
         displayMessage("Please complete all registration fields.", true);
         return;
@@ -80,6 +117,9 @@ registerForm.addEventListener("submit", function(event) {
         return;
     }
 
-    // Backend integration will be added later
-    displayMessage("Registration form submitted. Backend connection is not set up yet.");
+    // Registration backend is not implemented yet
+    displayMessage(
+        "Registration backend is not available yet.",
+        true
+    );
 });
