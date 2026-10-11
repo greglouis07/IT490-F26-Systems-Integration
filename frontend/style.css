@@ -1,0 +1,155 @@
+
+/* General Page Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e3a8a);
+    min-height: 100vh;
+    color: #1e293b;
+}
+
+/* Authentication Page Layout */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Login and Registration Card */
+.auth-box {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 420px;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+
+/* Website Title */
+.auth-box h1 {
+    font-size: 32px;
+    color: #1e3a8a;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 30px;
+}
+
+/* Form Headings */
+.auth-box h2 {
+    font-size: 24px;
+    margin-bottom: 25px;
+    color: #0f172a;
+}
+
+/* Input Groups */
+.input-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #334155;
+}
+
+/* Username and Password Fields */
+.input-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.input-group input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Login and Register Buttons */
+.auth-button {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.auth-button:hover {
+    background: #1e40af;
+    transform: translateY(-1px);
+}
+
+.auth-button:active {
+    transform: translateY(0);
+}
+
+/* Login / Register Navigation */
+.switch-text {
+    margin-top: 22px;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.switch-text a {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.switch-text a:hover {
+    text-decoration: underline;
+}
+
+/* Authentication Messages */
+#auth-message {
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#auth-message:empty {
+    display: none;
+}
+
+/* Hide Inactive Sections */
+[hidden] {
+    display: none !important;
+}
+
+/* Mobile Responsive Styling */
+@media (max-width: 480px) {
+    .auth-box {
+        padding: 28px 22px;
+    }
+
+    .auth-box h1 {
+        font-size: 28px;
+    }
+
+    .auth-box h2 {
+        font-size: 21px;
+    }
+}
