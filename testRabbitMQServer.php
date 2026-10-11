@@ -17,7 +17,7 @@ function requestProcessor($request)
   echo "received request: " . ($request['type'] ?? '(no type)') . PHP_EOL;
   
   if (!isset($request['type'])) {
-  return ['success' => true, 'message' => 'missing request type', 'code' => 1];
+  return ['success' => false, 'message' => 'missing request type', 'code' => 1];
 }
 switch ($request['type']) {
  case 'register':
@@ -30,8 +30,8 @@ case 'logout':
   return['success' => true, 'message' => 'stub: logged out'];
 default:
   return ['success' => false, 'message' => 'unknown request type', 'code' => 1];   
-} 
-
+ } 
+}
 $server = new rabbitMQServer("githappensRabbitMQ.ini","testServer");
 
 echo "testRabbitMQServer BEGIN".PHP_EOL;
