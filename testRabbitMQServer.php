@@ -18,7 +18,10 @@ function doLogin($username, $password)
     // return true;
     //return false if not valid
     global $DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME, $DB_PORT;
-
+    
+//glb9 echo add ons
+    echo "connecting to database at $DB_HOST..." . PHP_EOL;
+    
     $mysqli = new mysqli(
         $DB_HOST,
         $DB_USER,
@@ -26,6 +29,8 @@ function doLogin($username, $password)
         $DB_NAME,
         $DB_PORT
     );
+
+    echo  "connected" . PHP_EOL;
 
     if ($mysqli->connect_error)
     {
@@ -53,6 +58,8 @@ function doLogin($username, $password)
 
     $stmt->bind_param("s", $username);
     $stmt->execute();
+
+    echo "query complete" . PHP_EOL;
 
     $result = $stmt->get_result();
 
@@ -102,17 +109,34 @@ function requestProcessor($request)
         return "ERROR: unsupported message type";
     }
 
+//glb echo test for client response
+    echo "processing type: " . $request['type'] . PHP_EOL;
+
+    try
+    
+    {
+
     switch ($request['type'])
     {
         case "login":
-            return doLogin(
+            $response = doLogin(
                 $request['username'],
                 $request['password']
             );
+            echo "sending reply:" . PHP_EOL;
+            var_dump($response);
+            return $response;
 
         case "validate_session":
             return doValidate($request['sessionId']);
     }
+}
+catch (Throwable $e)
+{
+    echo "ERROR: " . $e->getMessage() . PHP_EOL;
+    return array("success" => false, "message" => "Server error");
+}
+//end edit
 
     return array(
         "returnCode" => '0',
