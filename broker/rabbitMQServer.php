@@ -166,7 +166,11 @@ function requestProcessor($request)
 catch (Throwable $e)
 {
     echo "ERROR: " . $e->getMessage() . PHP_EOL;
-    return array("success" => false, "message" => "Server error");
+    return array(
+        "success" => false,
+        "message" => "Server error",
+        "code" => 9
+    );
 }
 //end edit
 
