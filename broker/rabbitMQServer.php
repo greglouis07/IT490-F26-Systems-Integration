@@ -104,11 +104,15 @@ function doLogin($username, $password)
 function requestProcessor($request)
 {
     echo "received request" . PHP_EOL;
-    var_dump($request);
-
-    if (!isset($request['type']))
+//glb9 removed password from view 
+//avoid errors from strings using array 
+    if (!is_array($request) || !isset($request['type']))
     {
-        return "ERROR: unsupported message type";
+        return array(
+            "success" => false,
+            "message" => "Missing message type",
+            "code" => 1
+        );
     }
 
 //glb echo test for client response
@@ -121,6 +125,15 @@ function requestProcessor($request)
     switch ($request['type'])
     {
         case "login":
+            //glb9 
+            if (empty($request['username']) || empty($request['password']))
+                {
+                    return array(
+                       "success" => false,
+                       "message" => "Username and password are required",
+                       "code" => 2 
+                    );
+                }
             $response = doLogin(
                 $request['username'],
                 $request['password']
@@ -130,13 +143,34 @@ function requestProcessor($request)
             return $response;
 
         case "validate_session":
+            //glb9
+            if (empty($request['sessionId']))
+            {
+                return array(
+                    "success" => false,
+                    "message" => "sessionId is required",
+                    "code" => 2
+                );
+            }
             return doValidate($request['sessionId']);
+        
+        //glb9
+        default:
+            return array(
+                "success" =>false,
+                "message" => "Unknown request type",
+                "code" => 1
+            );
     }
 }
 catch (Throwable $e)
 {
     echo "ERROR: " . $e->getMessage() . PHP_EOL;
-    return array("success" => false, "message" => "Server error");
+    return array(
+        "success" => false,
+        "message" => "Server error",
+        "code" => 9
+    );
 }
 //end edit
 
