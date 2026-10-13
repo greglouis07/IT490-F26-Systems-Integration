@@ -1,5 +1,7 @@
 #!/usr/bin/php
 <?php
+set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/../shared');
+
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
@@ -150,11 +152,11 @@ $server = new rabbitMQServer(
     "testServer"
 );
 
-echo "testRabbitMQServer BEGIN" . PHP_EOL;
+echo "rabbitMQServer BEGIN" . PHP_EOL;
 
 $server->process_requests('requestProcessor');
 
-echo "testRabbitMQServer END" . PHP_EOL;
+echo "rabbitMQServer END" . PHP_EOL;
 
 exit();
 ?>

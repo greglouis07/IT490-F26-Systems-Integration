@@ -1,0 +1,5 @@
+ check process rabbitMQServer with pidfile /var/run/rabbitMQServer.pid
+   start program = "/etc/init.d/rabbitMQServer start"
+   stop program  = "/etc/init.d/rabbitMQServer stop"
+   if 4 restarts within 20 cycles then timeout
+
