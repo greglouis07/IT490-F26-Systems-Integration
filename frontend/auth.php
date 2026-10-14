@@ -87,7 +87,7 @@ if (!is_file($configFile)) {
 }
 
 $request = [
-    "type" => "login",
+    "type" => $type,
     "username" => $username,
     "password" => $password
 ];
