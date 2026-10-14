@@ -79,7 +79,8 @@ function doLogin($username, $password)
 
         return array(
             "success" => false,
-            "message" => "Invalid username or password"
+            "message" => "Invalid username or password",
+            "code" => 3
         );
     }
 
@@ -92,7 +93,8 @@ function doLogin($username, $password)
     {
         return array(
             "success" => false,
-            "message" => "Invalid username or password"
+            "message" => "Invalid username or password",
+            "code" => 3
         );
     }
 
