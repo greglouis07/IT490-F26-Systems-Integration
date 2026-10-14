@@ -93,7 +93,7 @@ $request = [
 ];
 
 try {
-    $client = new rabbitMQClient($configFile, "testServer");
+    $client = new rabbitMQClient($configFile, "databaseServer");
     $response = $client->send_request($request);
 
     if (!is_array($response) || !isset($response["success"])) {

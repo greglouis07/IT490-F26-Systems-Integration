@@ -192,7 +192,7 @@ catch (Throwable $e)
 
 $server = new rabbitMQServer(
     "githappensRabbitMQ.ini",
-    "testServer"
+    "databaseServer"
 );
 
 echo "rabbitMQServer BEGIN" . PHP_EOL;
