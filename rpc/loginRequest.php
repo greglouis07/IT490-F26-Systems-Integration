@@ -1,4 +1,7 @@
 <?php
+//glb9 look for files in shared (ini's)
+set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/../shared');
+
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
