@@ -6,11 +6,17 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
-$DB_HOST = "100.67.127.28";
-$DB_USER = "admin";
-$DB_PASSWORD = "githappensdb";
-$DB_NAME = "db";
-$DB_PORT = 3306;
+//glb9 moved database login to shared/githappensDatabase.ini
+$db = parse_ini_file(__DIR__ . '/../shared/githappensDatabase.ini', true);
+if ($db == false || !isset($db['database']))
+    {
+        die("Missing or invalid githappensDatabase.ini" . PHP_EOL);
+    }
+    $DB_HOST = $db['database']["DB_HOST"];
+    $DB_USER = $db['database']['DB_USER'];
+    $DB_PASSWORD = $db['database']['DB_PASSWORD'];
+    $DB_NAME = $db['database']['DB_NAME'];
+    $DB_PORT = (int) $db['database']['DB_PORT'];
 
 
 function doLogin($username, $password)
@@ -34,13 +40,14 @@ function doLogin($username, $password)
 
     echo  "connected" . PHP_EOL;
 
-    if ($mysqli->connect_error)
-    {
-        return array(
-            "success" => false,
-            "message" => "Database connection failed: " . $mysqli->connect_error
-        );
-    }
+    //glb9 removing this if statement because this error will catch further down its unneeded
+    //if ($mysqli->connect_error)
+    //{
+    //    return array(
+    //        "success" => false,
+    //        "message" => "Database connection failed: " . $mysqli->connect_error
+    //    );
+    //}
 
     $stmt = $mysqli->prepare(
         "SELECT id, username, email, password
@@ -72,7 +79,7 @@ function doLogin($username, $password)
 
         return array(
             "success" => false,
-            "message" => "User not found"
+            "message" => "Invalid username or password"
         );
     }
 
@@ -85,7 +92,7 @@ function doLogin($username, $password)
     {
         return array(
             "success" => false,
-            "message" => "Invalid password"
+            "message" => "Invalid username or password"
         );
     }
 
@@ -173,11 +180,11 @@ catch (Throwable $e)
     );
 }
 //end edit
-
-    return array(
-        "returnCode" => '0',
-        "message" => "Server received request and processed"
-    );
+//glb9 this never gets called old logic
+//    return array(
+//        "returnCode" => '0',
+//        "message" => "Server received request and processed"
+//    );
 }
 
 
