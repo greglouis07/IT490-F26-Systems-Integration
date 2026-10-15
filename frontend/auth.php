@@ -1,4 +1,3 @@
-
 <?php
 /*
 Git Happens - Frontend Authentication API
@@ -66,16 +65,17 @@ if ($type === "register") {
     exit;
 }
 
-// Load RabbitMQ client libraries from the project root.
+// glb9 load rabbitMQ client libraries through ini's in shared
 $projectRoot = dirname(__DIR__);
+set_include_path(get_include_path() . PATH_SEPARATOR . $projectRoot . '/shared');
 
-require_once $projectRoot . "/path.inc";
-require_once $projectRoot . "/get_host_info.inc";
-require_once $projectRoot . "/rabbitMQLib.inc";
+require_once('path.inc');
+require_once('get_host_info.inc');
+require_once('rabbitMQLib.inc');
 
 // This configuration will be created separately.
 // It must point to Aleen's broker over Tailscale.
-$configFile = $projectRoot . "/frontendRabbitMQ.ini";
+$configFile = $projectRoot . "/shared/githappensRabbitMQ.ini";
 
 if (!is_file($configFile)) {
     http_response_code(503);
@@ -87,7 +87,7 @@ if (!is_file($configFile)) {
 }
 
 $request = [
-    "type" => "login",
+    "type" => $type,
     "username" => $username,
     "password" => $password
 ];
