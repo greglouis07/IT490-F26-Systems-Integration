@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Site</title>
+</head>
+<body>
+
+<h1>Git Happens Site</h1>
+<div id="message">&nbsp;</div>
+
+<div id="loggedOut">
+    <h2>Register</h2>
+    Username: <input id="regUser" type="text" maxlength="30"><br>
+    Email: <input id="regEmail" type="email" maxlength="255"><br>
+    Password: <input id="regPass" type="password" maxlength="128"><br>
+    <button onclick="doRegister()">Register</button>
+
+    <h2>Log in</h2>
+    Username: <input id="logUser" type="text" maxlength="30"><br>
+    Password: <input id="logPass" type="password" maxlength="128"><br>
+    <button onclick="doLogin()">Log in</button>
+</div>
+
+<div id="loggedIn" style="display:none">
+    <h2>Protected area</h2>
+    <p id="welcome"></p>
+    <button onclick="loadProtected()">Load protected data</button>
+    <button onclick="doLogout()">Log out</button>
+    <pre id="protectedData"></pre>
+</div>
+
+<script>
+function send(params, callback)
+{
+    var body = Object.keys(params).map(function (key) {
+        return encodeURIComponent(key) + "=" + encodeURIComponent(params[key]);
+    }).join("&");
+
+    var request = new XMLHttpRequest();
+    request.open("POST", "login.php", true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    request.onreadystatechange = function ()
+    {
+        if (this.readyState !== 4) { return; }
+        var data;
+        try {
+            data = JSON.parse(this.responseText);
+        } catch (e) {
+            data = { success: false, message: "Server error, please try again" };
+        }
+        callback(data);
+    };
+    request.send(body);
+}
+
+function say(text)
+{
+    document.getElementById("message").textContent = text;
+}
+
+function showState(loggedIn, username)
+{
+    document.getElementById("loggedOut").style.display = loggedIn ? "none" : "block";
+    document.getElementById("loggedIn").style.display  = loggedIn ? "block" : "none";
+    document.getElementById("welcome").textContent = loggedIn ? "Welcome, " + username + "." : "";
+    document.getElementById("protectedData").textContent = "";
+}
+
+function doRegister()
+{
+    send({
+        type: "register",
+        username: document.getElementById("regUser").value,
+        email: document.getElementById("regEmail").value,
+        password: document.getElementById("regPass").value
+    }, function (data) {
+        say(data.message);
+        if (data.success) {
+            document.getElementById("regPass").value = "";
+        }
+    });
+}
+
+function doLogin()
+{
+    send({
+        type: "login",
+        username: document.getElementById("logUser").value,
+        password: document.getElementById("logPass").value
+    }, function (data) {
+        say(data.message);
+        document.getElementById("logPass").value = "";
+        if (data.success) {
+            showState(true, data.username);
+        }
+    });
+}
+
+function doLogout()
+{
+    send({ type: "logout" }, function (data) {
+        say(data.message);
+        showState(false);
+    });
+}
+
+function loadProtected()
+{
+    send({ type: "protected" }, function (data) {
+        document.getElementById("protectedData").textContent = data.message;
+    });
+}
+
+send({ type: "status" }, function (data) {
+    showState(data.loggedIn === true, data.username);
+});
+</script>
+
+</body>
+</html>
