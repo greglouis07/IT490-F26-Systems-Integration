@@ -34,7 +34,7 @@ if (!is_array($input)) {
 $type = $input["type"] ?? "";
 $username = trim($input["username"] ?? "");
 $password = $input["password"] ?? "";
-
+$email = trim($input["email"] ?? "");
 if (!in_array($type, ["login", "register"], true)) {
     http_response_code(400);
     echo json_encode([
@@ -54,7 +54,7 @@ if (!is_string($username) || !is_string($password) ||
     exit;
 }
 
-// Aleen's current backend has a login handler,
+// Aleen's current backend has a login  handler
 // but registration is not implemented yet.
 if ($type === "register") {
     http_response_code(501);
@@ -63,6 +63,16 @@ if ($type === "register") {
         "message" => "Registration backend is not available yet."
     ]);
     exit;
+}
+
+// greg registration is handled by doRegister in the backend 
+if  ($type ==="register" && $email === ""){
+	http_response_code(400);
+	echo json_encode([
+		"success" => false,
+		"message" => "Email is required to register."
+	]);
+	exit;
 }
 
 // glb9 load rabbitMQ client libraries through ini's in shared
@@ -91,6 +101,10 @@ $request = [
     "username" => $username,
     "password" => $password
 ];
+
+if ($type === "register"){
+	$request["email"] = $email;
+}
 
 try {
     $client = new rabbitMQClient($configFile, "databaseServer");
