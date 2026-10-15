@@ -26,6 +26,18 @@ function doLogin($username, $password)
     // return true;
     //return false if not valid
     global $DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME, $DB_PORT;
+
+    //aleens frontend commit 10/14
+    if (!is_string($username) || !is_string($password) ||
+        $username == "" || strlen($username) > 30 ||
+        $password == "" || strlen($password) > 4096)
+    {
+        return array(
+            "success" => false,
+            "message" => "Invalid username or password",
+            "code" => 3
+        );
+    }
     
 //glb9 echo add ons
     echo "connecting to database at $DB_HOST..." . PHP_EOL;

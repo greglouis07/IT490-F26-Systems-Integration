@@ -80,7 +80,7 @@ loginForm.addEventListener("submit", async function(event) {
         if (data.success) {
             displayMessage(data.message || "Login successful!");
             //glb9 home page redirect from login
-            window.location.href = "homePage.html";
+            window.location.href = "index.html";
 
             // Homepage navigation will be enabled after
             // authentication and session handling are ready.
