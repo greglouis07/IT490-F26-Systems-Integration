@@ -89,7 +89,8 @@ function doLogin($username, $password)
     $stmt->close();
     $mysqli->close();
 
-    if ($password !== $user['password'])
+//glb9 hash checking
+    if (!password_verify($password, $user['password']))
     {
         return array(
             "success" => false,
