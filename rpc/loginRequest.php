@@ -26,4 +26,4 @@ $response = $client->send_request($request);
 //$response = $client->publish($request);
 
 $payload = json_encode($response);
-echo $payload;
+echo $payload . PHP_EOL;
