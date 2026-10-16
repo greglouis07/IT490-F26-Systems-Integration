@@ -54,17 +54,6 @@ if (!is_string($username) || !is_string($password) ||
     exit;
 }
 
-// Aleen's current backend has a login  handler
-// but registration is not implemented yet.
-if ($type === "register") {
-    http_response_code(501);
-    echo json_encode([
-        "success" => false,
-        "message" => "Registration backend is not available yet."
-    ]);
-    exit;
-}
-
 // greg registration is handled by doRegister in the backend 
 if  ($type ==="register" && $email === ""){
 	http_response_code(400);
@@ -84,7 +73,7 @@ require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
 // This configuration will be created separately.
-// It must point to Aleen's broker over Tailscale.
+// It must point to Greg's broker (greg490) over Tailscale.
 $configFile = $projectRoot . "/shared/githappensRabbitMQ.ini";
 
 if (!is_file($configFile)) {
@@ -105,6 +94,9 @@ $request = [
 if ($type === "register"){
 	$request["email"] = $email;
 }
+
+//glb9 drop connection after 10 seconds of waiting
+ini_set("amqp.read_timeout", "10");
 
 try {
     $client = new rabbitMQClient($configFile, "databaseServer");

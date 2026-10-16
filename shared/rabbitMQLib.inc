@@ -229,7 +229,7 @@ class rabbitMQClient
 		}
 		catch(Exception $e)
 		{
-			die("failed to send message to exchange: ". $e->getMessage()."\n");
+			throw $e;
 		}
 	}
 
