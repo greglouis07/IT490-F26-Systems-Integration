@@ -26,6 +26,18 @@ function doLogin($username, $password)
     // return true;
     //return false if not valid
     global $DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME, $DB_PORT;
+
+    //aleens frontend commit 10/14
+    if (!is_string($username) || !is_string($password) ||
+        $username == "" || strlen($username) > 30 ||
+        $password == "" || strlen($password) > 4096)
+    {
+        return array(
+            "success" => false,
+            "message" => "Invalid username or password",
+            "code" => 3
+        );
+    }
     
 //glb9 echo add ons
     echo "connecting to database at $DB_HOST..." . PHP_EOL;
@@ -89,7 +101,8 @@ function doLogin($username, $password)
     $stmt->close();
     $mysqli->close();
 
-    if ($password !== $user['password'])
+//glb9 hash checking
+    if (!password_verify($password, $user['password']))
     {
         return array(
             "success" => false,
@@ -109,6 +122,95 @@ function doLogin($username, $password)
     );
 }
 
+//glb9 registration, validation
+function doRegister($username, $email, $password)
+{
+    global $DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME, $DB_PORT;
+
+    if (!is_string($username) || !is_string($email) || !is_string($password))
+    {
+        return array(
+            "success" => false,
+            "message" => "Invalid registration information",
+            "code" => 2
+        );
+    }
+    
+    $username = trim($username);
+    $email = trim($email);
+
+    if (!preg_match('/^[A-Za-z0-9_-]{3,30}$/', $username))
+    {
+        return array(
+            "success" => false,
+            "message" => "Username must be 3-30 letters, numbers, or _, -",
+            "code" => 2
+        );  
+    }
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) >255)
+    {
+        return array(
+            "success" => false,
+            "message" => "Invalid email address",
+            "code" => 2
+        );
+    }
+
+    if (strlen($password) < 8 || strlen($password) > 72)
+    {
+        return array(
+            "success" => false,
+            "message" => "Password must be atleast 8 characters",
+            "code" => 2
+        );
+    }
+
+    //glb9 never store the actual password ONLY the hash
+    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+    echo "connecting to database at $DB_HOST..." . PHP_EOL;
+
+    $mysqli = new mysqli(
+        $DB_HOST,
+        $DB_USER,
+        $DB_PASSWORD,
+        $DB_NAME,
+        $DB_PORT
+    );
+
+    try
+    {
+        $stmt = $mysqli->prepare(
+            "INSERT INTO users (username, email, password) VALUES (?, ?, ?)"
+        );
+        $stmt->bind_param("sss", $username, $email, $passwordHash);
+        $stmt->execute();
+        $stmt->close();
+    }
+    catch (mysqli_sql_exception $e)
+    {
+        $mysqli->close();
+
+        //glb9 1062 = duplicate username or email already taken
+        if ($e->getCode() == 1062)
+        {
+            return array(
+                "success" => false,
+                "message" => "Username or email already exists",
+                "code" => 4
+            );
+        }
+        throw $e; // anything else falls into the requestProcessor catch
+    }
+
+    $mysqli->close();
+    echo "Registered user: $username" . PHP_EOL;
+
+    return array(
+        "success" => true,
+        "message" => "Registration successful"
+    );
+}
 
 function requestProcessor($request)
 {
@@ -132,7 +234,26 @@ function requestProcessor($request)
     {
 
     switch ($request['type'])
-    {
+    {   
+        //glb9
+        case "register":
+            if (empty($request['username']) || empty($request['email']) || empty($request['password']))
+            {
+                return array(
+                    "success" => false,
+                    "message" => "Username, email and password are required",
+                    "code" => 2 
+                );
+            }
+            $response = doRegister(
+                $request['username'],
+                $request['email'],
+                $request['password']
+            );
+            echo "sending reply" . PHP_EOL;
+            var_dump($response);
+            return $response;
+
         case "login":
             //glb9 
             if (empty($request['username']) || empty($request['password']))
@@ -192,7 +313,7 @@ catch (Throwable $e)
 
 $server = new rabbitMQServer(
     "githappensRabbitMQ.ini",
-    "testServer"
+    "databaseServer"
 );
 
 echo "rabbitMQServer BEGIN" . PHP_EOL;
