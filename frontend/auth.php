@@ -106,6 +106,17 @@ try {
         throw new Exception("Invalid authentication response.");
     }
 
+    //glb9 keep the backend sessionId in http only with cookies
+    if ($type === "login" && $response["success"] && !empty($response["sessionId"]))
+        setcookie("sessionId", $response["sessionId"],
+        [
+            "expires" => time() + 3600,
+            "path" => "/",
+            "httponly" => true,
+            "samesite" => "Strict"
+        ] 
+    );
+
     // Do not return sensitive fields to the browser.
     echo json_encode([
         "success" => (bool) $response["success"],
