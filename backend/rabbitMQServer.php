@@ -228,6 +228,75 @@ function doRegister($username, $email, $password)
     );
 }
 
+//glb9 check session expiration
+function doValidate($sessionId)
+{
+    global $DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME, $DB_PORT;
+
+    $mysqli = new mysqli($DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME, $DB_PORT);
+
+    $stmt = $mysqli->prepare(
+        "SELECT users.username
+        FROM sessions
+        JOIN users ON users.id = sessions.user_id
+        WHERE sessions.sessionId = ? AND sessions.expires_at > NOW()"
+    );
+    $stmt->bind_param("s", $sessionId);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+
+    $stmt->close();
+    $mysqli->close();
+
+    if (!$row)
+    {
+        return array(
+            "success" => false,
+            "message" => "Invalid or expired session",
+            "code" => 5
+        );
+    }
+    
+    return array(
+        "success" => true,
+        "message" => "Session is valid",
+        "username" => $row['username']
+    );
+}
+
+//glb9 logout 
+function doLogout($sessionId)
+{
+    global $DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME, $DB_PORT;
+
+    $mysqli = new mysqli($DB_HOST, $DB_USER, $DB_PASSWORD, $DB_NAME, $DB_PORT);
+ 
+    $stmt = $mysqli->prepare("DELETE FROM sessions WHERE sessionId = ?");
+    $stmt->bind_param("s", $sessionId);
+    $stmt->execute();
+
+    $deleted = $stmt->affected_rows;
+
+    $stmt->close();
+    $mysqli->close();
+
+    if ($deleted === 0)
+    {
+        return array(
+            "success" => false,
+            "message" => "Invalid or expired session",
+            "code" => 5
+        );
+    }
+
+    return array(
+        "success" => true,
+        "message" => "Logged out"
+    );
+}
+
 function requestProcessor($request)
 {
     echo "received request" . PHP_EOL;
@@ -299,6 +368,17 @@ function requestProcessor($request)
                 );
             }
             return doValidate($request['sessionId']);
+        //glb9
+        case "logout":
+            if (empty($request['sessionId']));
+            {
+                return array(
+                    "success" => false,
+                    "message" => "sessionId is required",
+                    "code" => 2
+                );
+            }
+            return doLogout($request['sessionId']);
         
         //glb9
         default:
