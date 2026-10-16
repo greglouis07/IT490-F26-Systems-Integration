@@ -73,7 +73,8 @@ function doLogin($username, $password)
 
         return array(
             "success" => false,
-            "message" => "Database query failed"
+            "message" => "Database query failed",
+            "code" => 9
         );
     }
 
@@ -98,12 +99,14 @@ function doLogin($username, $password)
 
     $user = $result->fetch_assoc();
 
-    $stmt->close();
-    $mysqli->close();
+    $stmt->close(); 
 
 //glb9 hash checking
     if (!password_verify($password, $user['password']))
     {
+        //glb9 avoid close after correct password
+        $mysqli->close();
+
         return array(
             "success" => false,
             "message" => "Invalid username or password",
@@ -111,9 +114,22 @@ function doLogin($username, $password)
         );
     }
 
+    //glb9 create backend session 1 hour expiration
+    $sessionId = bin2hex(random_bytes(32));
+
+    $stmt = $mysqli->prepare(
+        "INSERT INTO sessions (sessionId, user_id, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))"
+    );
+    $stmt->bind_param("si", $sessionId, $user['id']);
+    $stmt->execute();
+
+    $stmt->close();
+    $mysqli->close();
+
     return array(
         "success" => true,
         "message" => "Login successful",
+        "sessionId" => $sessionId,
         "user" => array(
             "id" => $user['id'],
             "username" => $user['username'],
