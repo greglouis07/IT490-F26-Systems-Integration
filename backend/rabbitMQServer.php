@@ -370,7 +370,7 @@ function requestProcessor($request)
             return doValidate($request['sessionId']);
         //glb9
         case "logout":
-            if (empty($request['sessionId']));
+            if (empty($request['sessionId']))
             {
                 return array(
                     "success" => false,
