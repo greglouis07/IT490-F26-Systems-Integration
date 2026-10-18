@@ -35,7 +35,8 @@ $type = $input["type"] ?? "";
 $username = trim($input["username"] ?? "");
 $password = $input["password"] ?? "";
 $email = trim($input["email"] ?? "");
-if (!in_array($type, ["login", "register"], true)) {
+
+if (!in_array($type, ["login", "register", "validate_session"], true)) {
     http_response_code(400);
     echo json_encode([
         "success" => false,
@@ -44,8 +45,9 @@ if (!in_array($type, ["login", "register"], true)) {
     exit;
 }
 
-if (!is_string($username) || !is_string($password) ||
-    $username === "" || $password === "") {
+//no user pass for session validation
+if ($type !== "validate_session" && (!is_string($username) || !is_string($password) || $username === "" || $password === "")) 
+{
     http_response_code(400);
     echo json_encode([
         "success" => false,
@@ -62,6 +64,19 @@ if  ($type ==="register" && $email === ""){
 		"message" => "Email is required to register."
 	]);
 	exit;
+}
+
+//glb9 validate_session uses sessionId cookie instead of user and pass
+$sessionId = $_COOKIE["sessionId"] ?? "";
+
+if ($type === "validate_session" && $sessionId === "")
+{
+    http_response_code(401);
+    echo json_encode([
+        "success" => false,
+        "message" => "Not logged in"
+    ]);
+    exit;
 }
 
 // glb9 load rabbitMQ client libraries through ini's in shared
@@ -85,11 +100,21 @@ if (!is_file($configFile)) {
     exit;
 }
 
-$request = [
-    "type" => $type,
-    "username" => $username,
-    "password" => $password
-];
+if ($type === "validate_session")
+{
+    $request = [
+        "type" => "validate_session", 
+        "sessionId" => $sessionId
+    ];
+}
+else
+{
+    $request = [
+        "type" => $type,
+        "username" => $username,
+        "password" => $password
+    ];
+}
 
 if ($type === "register"){
 	$request["email"] = $email;
@@ -104,6 +129,23 @@ try {
 
     if (!is_array($response) || !isset($response["success"])) {
         throw new Exception("Invalid authentication response.");
+    }
+
+    //glb9 validate session check to redirect to login
+    if ($type === "validate_session")
+    {
+        if (!$response["success"])
+        {
+            http_response_code(401);
+        }
+        echo json_encode([
+            "success" => (bool) $response["success"],
+            "message" => $response["message"] ?? "Session checked",
+            "username" => $response["username"] ?? null 
+            
+        ]);
+        exit;
+            
     }
 
     //glb9 keep the backend sessionId in http only with cookies
