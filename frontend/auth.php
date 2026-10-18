@@ -36,7 +36,7 @@ $username = trim($input["username"] ?? "");
 $password = $input["password"] ?? "";
 $email = trim($input["email"] ?? "");
 
-if (!in_array($type, ["login", "register", "validate_session"], true)) {
+if (!in_array($type, ["login", "register", "validate_session", "logout"], true)) {
     http_response_code(400);
     echo json_encode([
         "success" => false,
@@ -45,8 +45,9 @@ if (!in_array($type, ["login", "register", "validate_session"], true)) {
     exit;
 }
 
-//no user pass for session validation
-if ($type !== "validate_session" && (!is_string($username) || !is_string($password) || $username === "" || $password === "")) 
+//no user pass for session validation or logout
+if ($type !== "validate_session" && $type !== "logout" &&
+    (!is_string($username) || !is_string($password) || $username === "" || $password === "")) 
 {
     http_response_code(400);
     echo json_encode([
@@ -78,6 +79,26 @@ if ($type === "validate_session" && $sessionId === "")
     ]);
     exit;
 }
+//glb9 logout clears cookie and deletes backend session
+if ($type === "logout")
+{
+    setcookie("sessionId", "",
+    [
+        "expires" => time() - 3600,
+        "path" => "/",
+        "httponly" => true,
+        "samesite" => "Strict"
+    ]);
+
+    if ($sessionId === "")
+    {
+        echo json_encode([
+            "success" => true,
+            "message" => "Logged out"
+        ]);
+        exit;
+    }
+}
 
 // glb9 load rabbitMQ client libraries through ini's in shared
 $projectRoot = dirname(__DIR__);
@@ -100,10 +121,10 @@ if (!is_file($configFile)) {
     exit;
 }
 
-if ($type === "validate_session")
+if ($type === "validate_session" || $type === "logout")
 {
     $request = [
-        "type" => "validate_session", 
+        "type" => "$type", 
         "sessionId" => $sessionId
     ];
 }
@@ -146,6 +167,14 @@ try {
         ]);
         exit;
             
+    }
+    if ($type === "logout")
+    {
+        echo json_encode([
+            "success" => true,
+            "message" => "Logged out"
+        ]);
+        exit;
     }
 
     //glb9 keep the backend sessionId in http only with cookies
