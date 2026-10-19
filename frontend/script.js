@@ -79,6 +79,8 @@ loginForm.addEventListener("submit", async function(event) {
 
         if (data.success) {
             displayMessage(data.message || "Login successful!");
+            //glb9 home page redirect from login
+            window.location.href = "homePage.html";
 
             // Homepage navigation will be enabled after
             // authentication and session handling are ready.
@@ -98,15 +100,16 @@ loginForm.addEventListener("submit", async function(event) {
 });
 
 // Handle registration form submission
-registerForm.addEventListener("submit", function(event) {
+registerForm.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     const username = document.getElementById("register-username").value.trim();
+    const email = document.getElementById("register-email").value.trim();
     const password = document.getElementById("register-password").value;
     const confirmPassword = document.getElementById("confirm-password").value;
 
     // Check for empty fields
-    if (!username || !password || !confirmPassword) {
+    if (!username || !email || !password || !confirmPassword) {
         displayMessage("Please complete all registration fields.", true);
         return;
     }
@@ -117,9 +120,37 @@ registerForm.addEventListener("submit", function(event) {
         return;
     }
 
-    // Registration backend is not implemented yet
-    displayMessage(
-        "Registration backend is not available yet.",
-        true
-    );
+//glb9 backend handler send reg to auth.php
+    displayMessage("Registering... ");
+
+    try
+    {
+        const response = await fetch("auth.php",
+        {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                type: "register",
+                username: username,
+                email: email,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) 
+        {
+            displayMessage(data.message || "Registration succesful! Log in now.");
+            registerForm.reset();
+        }
+        else
+        {
+            displayMessage(data.message || "Registration failed.", true);
+        }
+    } catch (error) {
+        console.error("Registration request failed:", error);
+        displayMessage("Unable to connect to authentication service.", true
+        );
+    }
 });

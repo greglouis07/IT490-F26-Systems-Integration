@@ -1,4 +1,3 @@
-
 <?php
 /*
 Git Happens - Frontend Authentication API
@@ -35,8 +34,9 @@ if (!is_array($input)) {
 $type = $input["type"] ?? "";
 $username = trim($input["username"] ?? "");
 $password = $input["password"] ?? "";
+$email = trim($input["email"] ?? "");
 
-if (!in_array($type, ["login", "register"], true)) {
+if (!in_array($type, ["login", "register", "validate_session", "logout"], true)) {
     http_response_code(400);
     echo json_encode([
         "success" => false,
@@ -45,8 +45,10 @@ if (!in_array($type, ["login", "register"], true)) {
     exit;
 }
 
-if (!is_string($username) || !is_string($password) ||
-    $username === "" || $password === "") {
+//no user pass for session validation or logout
+if ($type !== "validate_session" && $type !== "logout" &&
+    (!is_string($username) || !is_string($password) || $username === "" || $password === "")) 
+{
     http_response_code(400);
     echo json_encode([
         "success" => false,
@@ -55,27 +57,60 @@ if (!is_string($username) || !is_string($password) ||
     exit;
 }
 
-// Aleen's current backend has a login handler,
-// but registration is not implemented yet.
-if ($type === "register") {
-    http_response_code(501);
+// greg registration is handled by doRegister in the backend 
+if  ($type ==="register" && $email === ""){
+	http_response_code(400);
+	echo json_encode([
+		"success" => false,
+		"message" => "Email is required to register."
+	]);
+	exit;
+}
+
+//glb9 validate_session uses sessionId cookie instead of user and pass
+$sessionId = $_COOKIE["sessionId"] ?? "";
+
+if ($type === "validate_session" && $sessionId === "")
+{
+    http_response_code(401);
     echo json_encode([
         "success" => false,
-        "message" => "Registration backend is not available yet."
+        "message" => "Not logged in"
     ]);
     exit;
 }
+//glb9 logout clears cookie and deletes backend session
+if ($type === "logout")
+{
+    setcookie("sessionId", "",
+    [
+        "expires" => time() - 3600,
+        "path" => "/",
+        "httponly" => true,
+        "samesite" => "Strict"
+    ]);
 
-// Load RabbitMQ client libraries from the project root.
+    if ($sessionId === "")
+    {
+        echo json_encode([
+            "success" => true,
+            "message" => "Logged out"
+        ]);
+        exit;
+    }
+}
+
+// glb9 load rabbitMQ client libraries through ini's in shared
 $projectRoot = dirname(__DIR__);
+set_include_path(get_include_path() . PATH_SEPARATOR . $projectRoot . '/shared');
 
-require_once $projectRoot . "/path.inc";
-require_once $projectRoot . "/get_host_info.inc";
-require_once $projectRoot . "/rabbitMQLib.inc";
+require_once('path.inc');
+require_once('get_host_info.inc');
+require_once('rabbitMQLib.inc');
 
 // This configuration will be created separately.
-// It must point to Aleen's broker over Tailscale.
-$configFile = $projectRoot . "/frontendRabbitMQ.ini";
+// It must point to Greg's broker (greg490) over Tailscale.
+$configFile = $projectRoot . "/shared/githappensRabbitMQ.ini";
 
 if (!is_file($configFile)) {
     http_response_code(503);
@@ -86,19 +121,72 @@ if (!is_file($configFile)) {
     exit;
 }
 
-$request = [
-    "type" => "login",
-    "username" => $username,
-    "password" => $password
-];
+if ($type === "validate_session" || $type === "logout")
+{
+    $request = [
+        "type" => "$type", 
+        "sessionId" => $sessionId
+    ];
+}
+else
+{
+    $request = [
+        "type" => $type,
+        "username" => $username,
+        "password" => $password
+    ];
+}
+
+if ($type === "register"){
+	$request["email"] = $email;
+}
+
+//glb9 drop connection after 10 seconds of waiting
+ini_set("amqp.read_timeout", "10");
 
 try {
-    $client = new rabbitMQClient($configFile, "testServer");
+    $client = new rabbitMQClient($configFile, "databaseServer");
     $response = $client->send_request($request);
 
     if (!is_array($response) || !isset($response["success"])) {
         throw new Exception("Invalid authentication response.");
     }
+
+    //glb9 validate session check to redirect to login
+    if ($type === "validate_session")
+    {
+        if (!$response["success"])
+        {
+            http_response_code(401);
+        }
+        echo json_encode([
+            "success" => (bool) $response["success"],
+            "message" => $response["message"] ?? "Session checked",
+            "username" => $response["username"] ?? null 
+            
+        ]);
+        exit;
+            
+    }
+    if ($type === "logout")
+    {
+        echo json_encode([
+            "success" => true,
+            "message" => "Logged out"
+        ]);
+        exit;
+    }
+
+    //glb9 keep the backend sessionId in http only with cookies
+    if ($type === "login" && $response["success"] && !empty($response["sessionId"]))
+        setcookie("sessionId", $response["sessionId"],
+        [
+            "expires" => time() + 3600,
+            "path" => "/",
+            "httponly" => true,
+            "samesite" => "Strict"
+        ] 
+    );
 
     // Do not return sensitive fields to the browser.
     echo json_encode([
