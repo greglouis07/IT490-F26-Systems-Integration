@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discussion Board</title>
+
+</head>
+<body>
+
+
+    <main class="board">
+
+        <section id="list-view">
+            <div class="board-header">
+                <h1>Discussion Board</h1>
+                <button type="button" id="new-post-button" class="board-button">New post</button>
+            </div>
+
+            <form id="post-form" class="board-form" hidden>
+                <label for="post-title">Title</label>
+                <input type="text" id="post-title" maxlength="150" placeholder="e.g. Is a PSA 9 Charizard worth grading?" required>
+
+                <label for="post-body">Description</label>
+                <textarea id="post-body" rows="6" maxlength="5000" placeholder="What do you want to talk about?" required></textarea>
+
+                <div class="form-actions">
+                    <button type="submit" class="board-button">Post</button>
+                    <button type="button" id="cancel-post" class="board-button secondary">Cancel</button>
+                </div>
+            </form>
+
+            <ul id="post-list" class="post-list"></ul>
+            <p id="empty-message" class="muted" hidden>No posts yet. Start the first discussion.</p>
+        </section>
+
+        <section id="post-view" hidden>
+            <button type="button" id="back-button" class="board-button secondary">Back to all posts</button>
+
+            <article class="post-full">
+                <h1 id="post-view-title"></h1>
+                <p class="meta" id="post-view-meta"></p>
+                <p id="post-view-body" class="body-text"></p>
+            </article>
+
+            <h2 id="replies-heading">Replies</h2>
+            <ul id="reply-list" class="reply-list"></ul>
+
+            <form id="reply-form" class="board-form">
+                <label for="reply-body">Your reply</label>
+                <textarea id="reply-body" rows="4" maxlength="5000" required></textarea>
+                <div class="form-actions">
+                    <button type="submit" class="board-button">Post reply</button>
+                </div>
+            </form>
+        </section>
+
+        <p id="board-message" role="status" aria-live="polite"></p>
+    </main>
+    <script src="discussions.js"></script>
+</body>
+</html>
