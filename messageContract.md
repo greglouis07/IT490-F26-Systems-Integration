@@ -18,18 +18,18 @@
 - 1: missing or unknown request type 
 - 2: missing required field 
 - 3: invalid username or password 
-- 4: username already taken 
+- 4: username or email already taken 
 - 5: invalid or expired session 
 - 9: server or database error
  
 ## register
-Request:  type, username, password
+Request:  type, username, email, password
 Success:  success, message
 Failure codes: 2, 4, 9
 
 ## login
 Request:  type, username, password
-Success:  success, message, sessionId
+Success:  success, message, sessionId, user (id, username, email)
 Failure codes: 2, 3, 9
 
 ## validate_session
@@ -42,8 +42,7 @@ Request:  type, sessionId
 Success:  success, message
 Failure codes: 2, 5, 9
 
-## ping
-- dmzServer
-    Request: type
-    Success: success, message
-    Failure code: 1
+## ping (dmzServer)
+Request: type
+Success: success, message 
+Failure codes: 1
