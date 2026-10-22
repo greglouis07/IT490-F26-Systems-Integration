@@ -8,6 +8,12 @@
 - Failed responses also include `code` (int) from the table below.
 - Never send passwords or password hashes back to the frontend.
 
+## Routes
+- databaseServer: databaseExchange > databaseQueue answered by rabbitMQServer.php
+    Types: register, login, validate_session, logout
+- dmzServer: dmzExchange > dmzQueue answered by dmzServer.php
+    Types: ping
+
 ## Error codes
 - 1: missing or unknown request type 
 - 2: missing required field 
@@ -35,3 +41,9 @@ Failure codes: 2, 5, 9
 Request:  type, sessionId
 Success:  success, message
 Failure codes: 2, 5, 9
+
+## ping
+- dmzServer
+    Request: type
+    Success: success, message
+    Failure code: 1
