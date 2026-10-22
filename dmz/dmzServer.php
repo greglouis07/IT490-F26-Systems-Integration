@@ -2,7 +2,7 @@
 <?php
 //glb9 dmz listener answers requests by [dmzServer]
 
-set_include_path(get_include_path() . PATH_SEPARATOR > __DIR__ . '/../shared');
+set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/../shared');
 
 require_once('path.inc');
 require_once('get_host_info.inc');
@@ -22,6 +22,23 @@ function requestProcessor($request)
     }
 
     echo "processing type: " . $request['type'] . PHP_EOL;
+
+    //Confirm dmz route works
+    switch ($request['type'])
+    {
+        case "ping":
+            return array(
+                "success" => true,
+                "message" => "dmz listener is up"
+            );
+
+        default:
+            return array(
+                "success" => false,
+                "message" => "Missing message type",
+                "Code" => 1
+            );
+    }
 }
 
 $server = new rabbitMQServer(

@@ -39,13 +39,13 @@ Look at the owner of the folder you changed, then Merge pull request → Confirm
 
 **For the next piece of work, go back to step 1. Don't reuse an old branch; it's behind test**
 
-# Getting a deleted branch back
+## Getting a deleted branch back
 On GitHub: open the merged pull request and click Restore branch.
 From your machine: your local branch still exists.
   - git switch yourNewBranch
   - git push -u origin yourNewBranch
 
-# If something goes wrong
+## If something goes wrong
 Problem: Push to test rejected,
 Solution: Expected. Push your own branch and open a pull request.
 
