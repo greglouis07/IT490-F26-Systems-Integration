@@ -1,8 +1,14 @@
 <?php
+//Function
+function getCardPrices($cardId)
+{
+
+
+
 $ini_path = 
 __DIR__ ."/pokemonApi.ini";
 if(!file_exists($ini_path)) {
-	die("ERROR , No Configuration file $ini_path found (.ini file).\n");
+	return ['success' => false, 'message' => "No configuration file found", 'code' => 2];
 }
 
 $apiConfig = parse_ini_file($ini_path, true);
@@ -14,7 +20,7 @@ $apiKey = $apiConfig['pokemon_api']['api_key'];
 $ch = curl_init();
 
 //Set  cURL URL 
-curl_setopt($ch, CURLOPT_URL, $apiUrl);
+curl_setopt($ch, CURLOPT_URL, $apiUrl . '/cards/' . $cardId . '/prices');
 
 //Setting to have cURL return the response in string instead of a direct output.
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -36,7 +42,7 @@ $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
 if($httpCode !==200)
 {
-	die("API request failed with HTTP code $httpCode,\n $apiResponse\n");
+	return ['success' => false, 'message' => "API request failed with HTTP code $httpCode", 'code' => 3];
 }
 //check if any error occured print error code and error message
 if(curl_errno($ch))
@@ -44,7 +50,7 @@ if(curl_errno($ch))
 	$errorCode = curl_errno($ch);
 	$errorMsg = curl_error($ch);
 	curl_close($ch);
-	die("cURL Error [$errorCode]: " . $errorMsg . "\n");
+	return ['success' => false, 'message' => "cURL Error [$errorCode]: $errorMsg", 'code' => 3];
 }
 
 //close
@@ -57,9 +63,9 @@ $data = json_decode($apiResponse, true);
 
 if(json_last_error() !==JSON_ERROR_NONE) 
 {
-	die("JSON Decode Error: " . json_last_error_msg() . "\n");
+	return ['success' => false, 'message' => "JSON Decode Error: " . json_last_error_msg(), 'code' => 4];
 }
 //output success summary
-echo "Succesfully fetched" . count($data['data'] ?? []) . "cards .\n";
-
+return ['success' => true, 'message' => 'OK', 'code' => 0, 'data' => $data['data']];
+}
 ?>

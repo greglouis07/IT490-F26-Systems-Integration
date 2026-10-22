@@ -7,6 +7,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/../shared');
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
+require_once(__DIR__ . '/pokemonData.php');
 
 function requestProcessor($request)
 {
@@ -31,6 +32,17 @@ function requestProcessor($request)
                 "success" => true,
                 "message" => "dmz listener is up"
             );
+
+        case "get_card_prices":
+            if (!isset($request['cardId']))
+            {
+                return array(
+                    "success" => false,
+                    "message" => "Missing cardId",
+                    "code" => 1
+                );
+            }
+            return getCardPrices($request['cardId']);
 
         default:
             return array(
