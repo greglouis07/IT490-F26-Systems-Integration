@@ -1,27 +1,58 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Git Happens | Home</title>
-
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Git Happens | Pokémon Collection</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <main class="auth-container">
-        <div class="auth-box">
+    <main>
+        <h1>Git Happens</h1>
+        <p>Pokémon Card Collection</p>
 
-            <h1>Git Happens</h1>
-            <p class="subtitle">You're logged in.</p>
+        <!-- Search Section -->
+        <section>
+            <h2>Search Pokémon Cards</h2>
 
-            <p class="switch-text">
-                <a href="index.html" id="logout-link">Log out</a>
-            </p>
+            <form id="card-search-form">
+                <input
+                    type="text"
+                    id="pokemon-search"
+                    placeholder="Search Pokémon cards..."
+                    required
+                >
+                <button type="submit">Search</button>
+            </form>
 
-        </div>
+            <p id="search-message"></p>
+            <div id="card-results"></div>
+        </section>
+
+        <!-- Collection Value -->
+        <section>
+            <h2>Collection Value</h2>
+            <h3 id="collection-value">$0.00</h3>
+        </section>
+
+        <!-- My Collection -->
+        <section>
+            <h2>My Collection</h2>
+            <div id="my-collection">
+                <p>No Pokémon cards added yet.</p>
+            </div>
+        </section>
+
+        <p>
+            <a href="index.html" id="logout-link">
+                Log out
+            </a>
+        </p>
     </main>
 
+    <script src="homePage.js"></script>
 </body>
 </html>
