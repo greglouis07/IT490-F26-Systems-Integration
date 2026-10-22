@@ -141,3 +141,56 @@ searchForm.addEventListener("submit", event => {
 });
 
 displayCollection();
+
+// Check if the user has a valid session
+async function validateSession() {
+    try {
+        const response = await fetch("auth.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({ type: "validate_session" })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            window.location.replace("index.html");
+        }
+    } catch (error) {
+        console.error("Session validation failed:", error);
+        window.location.replace("index.html");
+    }
+}
+
+// Log the user out
+async function logout() {
+    try {
+        const response = await fetch("auth.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({ type: "logout" })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            console.error("Logout failed:", data.message);
+            return;
+        }
+
+        window.location.replace("index.html");
+    } catch (error) {
+        console.error("Logout error:", error);
+    }
+}
+
+// validate session on homePage
+validateSession();
+
+// Handle logout link
+document.getElementById("logout-link").addEventListener("click", function (event) {
+    event.preventDefault();
+    logout();
+});
