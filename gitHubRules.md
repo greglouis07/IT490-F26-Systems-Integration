@@ -1,7 +1,7 @@
 # GitHub Rules and Workflow
 
 ## Branch | Purpose | When it updates
-- master | Final graded branch | Large Milestones pulled from test branch (needs 1 approval)
+- master | Final graded branch | Large Milestones pulled from test branch (needs everyones(3) approval)
 - test | Must always be functioning to pull from | ONLY Pull requests
 - yourBranch | temporary branch for each feature | Push freely (auto deleted when merged)
 

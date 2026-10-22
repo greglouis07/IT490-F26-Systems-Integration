@@ -10,7 +10,7 @@ require_once('rabbitMQLib.inc');
 
 function requestProcessor($request)
 {
-    echo "recieved request" . PHP_EOL;
+    echo "received request" . PHP_EOL;
 
     if (!is_array($request) || !isset($request['type']))
     {
@@ -35,8 +35,8 @@ function requestProcessor($request)
         default:
             return array(
                 "success" => false,
-                "message" => "Missing message type",
-                "Code" => 1
+                "message" => "Unknown request type",
+                "code" => 1
             );
     }
 }
