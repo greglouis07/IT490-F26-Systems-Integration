@@ -10,7 +10,8 @@ require_once('rabbitMQLib.inc');
 $client = new rabbitMQClient("githappensRabbitMQ.ini", "dmzServer");
 
 $request = array();
-$request['type'] = "ping";
+$request['type'] = "get_card_prices";
+$request['cardId'] = "20463";
 
 $response = $client->send_request($request);
 
