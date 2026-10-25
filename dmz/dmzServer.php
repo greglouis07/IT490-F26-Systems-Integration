@@ -39,7 +39,7 @@ function requestProcessor($request)
                 return array(
                     "success" => false,
                     "message" => "Missing cardId",
-                    "code" => 1
+                    "code" => 2
                 );
             }
             return getCardPrices($request['cardId']);
