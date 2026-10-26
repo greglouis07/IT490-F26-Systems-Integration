@@ -84,7 +84,7 @@ function cardSearch($cardName)
 
 	//glb9 search URL /search?q=name&game=pokemon
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL< $api_Url / '/search?q=' . urlencode($cardName) . '&game=pokemon');
+	curl_setopt($ch, CURLOPT_URL, $api_Url . '/search?q=' . urlencode($cardName) . '&game=pokemon');
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, ["X-API-Key: " . $api_Key]);
 	curl_setopt($ch, CURLOPT_TIMEOUT, 15);
