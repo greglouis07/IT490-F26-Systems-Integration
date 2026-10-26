@@ -23,7 +23,7 @@ require_once("path.inc");
 require_once("get_host_info.inc");
 require_once("rabbitMQLib.inc");
  
-$client = new rabbitMQClient($root . "/shared/githappensRabbitMQ.ini", "testServer");
+$client = new rabbitMQClient($root . "/shared/githappensRabbitMQ.ini", "databaseServer");
  
 echo json_encode($client->send_request([
    "type"      => $action,
