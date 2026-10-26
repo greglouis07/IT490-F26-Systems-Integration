@@ -68,4 +68,24 @@ if(json_last_error() !==JSON_ERROR_NONE)
 //output success summary
 return ['success' => true, 'message' => 'OK', 'code' => 0, 'data' => $data['data']];
 }
+
+//glb9 card_search checks card name with TCG API
+function cardSearch($cardName)
+{
+	$ini_path = __DIR__ . "/pokemonApi.ini";
+	if(!file_exists($ini_path)) {
+		return ['success' => false,
+		'message' => "No config file",
+		'code' => 9
+		];
+	}
+
+	$apiConfig = parse_ini_file($ini_path, true);
+
+	$api_Url = $apiConfig['pokemon_api']['api_url'];
+	$api_Key = $apiConfig['pokemon_api']['api_key'];
+
+	//glb9 temporary test code
+	return ['success' => false, 'message' => "cardSearch under construction"];
+}
 ?>
