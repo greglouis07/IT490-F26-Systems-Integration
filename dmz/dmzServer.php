@@ -44,6 +44,17 @@ function requestProcessor($request)
             }
             return getCardPrices($request['cardId']);
 
+        case "card_search":
+            if (!isset($request['cardName']) || trim($request['cardName']) === "")
+            {
+                return array(
+                    "success" => false,
+                    "message" => "Missing cardName",
+                    "code" => 2
+                );
+            }
+            return cardSearch($request['cardName']);
+
         default:
             return array(
                 "success" => false,
