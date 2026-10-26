@@ -47,7 +47,7 @@ Request: type
 Success: success, message 
 Failure codes: 1
 
-## car_search (dmzServer)
+## card_search (dmzServer)
 Request: type, cardName
 Success: success, message, data (matching cards and id's)
 Failure codes: 2, 9
