@@ -10,7 +10,7 @@
 
 ## Routes
 - databaseServer: databaseExchange > databaseQueue answered by rabbitMQServer.php
-    Types: register, login, validate_session, logout
+    Types: register, login, validate_session, logout, list_posts, get_post, create_post, create_reply
 - dmzServer: dmzExchange > dmzQueue answered by dmzServer.php
     Types: ping
 
@@ -20,6 +20,7 @@
 - 3: invalid username or password 
 - 4: username or email already taken 
 - 5: invalid or expired session 
+- 6: post not found
 - 9: server or database error
  
 ## register
@@ -41,6 +42,26 @@ Failure codes: 2, 5, 9
 Request:  type, sessionId
 Success:  success, message
 Failure codes: 2, 5, 9
+
+## list_posts
+Request:  type, sessionId
+Success:  success, message, posts
+Failure codes: 5, 9
+
+## get_post
+Request:  type, sessionId, postId
+Success:  success, message, post, replies
+Failure codes: 5, 6, 9
+
+## create_post
+Request:  type, sessionId, title, body
+Success:  success, message, postId
+Failure codes: 2, 5, 9
+
+## create_reply
+Request:  type, sessionId, postId, body
+Success:  success, message
+Failure codes: 2, 5, 6, 9
 
 ## ping (dmzServer)
 Request: type
