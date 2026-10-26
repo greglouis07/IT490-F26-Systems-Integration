@@ -91,11 +91,29 @@ function cardSearch($cardName)
 	
 	$apiResponse = curl_exec($ch);
 	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	
+	//glb9 check network than HTTP
+	if(curl_errno($ch))
+	{
+		$errorMsg = curl_error($ch);
+		curl_close($ch);
+		return ['success' => false, 'message' => "curl error: $errorMsg", 'code' => 9];
+	}
 	curl_close($ch);
-	
-	//glb9 temporary test
-	return ['success' => false, 'message' => "cardSearch HTTP $httpCode"];
-	
-}
 
+	//Api answer error
+	if($httpCode !== 200)
+	{
+		return ['success' => false, 'message' => "API request failed with HTTP", 'code' => 9];
+	}
+
+	//glb9 JSON reply > PHP
+	$data = json_decode($apiResponse, true);
+	if(json_last_error() !== JSON_ERROR_NONE)
+	{
+		return ['success' => false, 'message' => "JSON decoding error: " . json_last_error_msg(), 'code' => 9];
+	}
+
+	['success' => true, 'message' => 'success', 'data' => $data['data']];
+}
 ?>
