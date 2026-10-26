@@ -33,3 +33,18 @@ CREATE TABLE IF NOT EXISTS replies (
        REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- glb9 card search table
+CREATE TABLE IF NOT EXISTS cards (
+    id INT PRIMARY KEY, -- TCG API card id
+    name VARCHAR(255) NOT NULL,
+    clean_name VARCHAR(255) NOT NULL,
+    set_name VARCHAR(150),
+    number VARCHAR(20),
+    rarity VARCHAR(50),
+    printing VARCHAR(50),
+    image_url VARCHAR(500),
+    market_price DECIMAL(10,2),
+    market_price_as_of DATE, -- date TCGplayer priced it
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_cards_clean_name (clean_name)
+);
