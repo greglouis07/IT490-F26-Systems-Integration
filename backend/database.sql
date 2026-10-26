@@ -1,5 +1,5 @@
--- glb9 adding sessions table for aleens backend sudo mysql DB_NAME < backend/sessions.sql
-CREATE TABLE sessions (
+-- glb9 create sessions table for aleens backend sudo mysql DB_NAME < backend/sessions.sql
+CREATE TABLE IF NOT EXISTS sessions (
     sessionId CHAR(64) NOT NULL,
     user_id INT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -9,7 +9,7 @@ CREATE TABLE sessions (
     CONSTRAINT fk_sessions_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
-CREATE TABLE posts (
+CREATE TABLE IF NOT EXISTS posts (
    id         INT AUTO_INCREMENT PRIMARY KEY,
    user_id    INT NOT NULL,
    title      VARCHAR(150) NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE posts (
        REFERENCES users(id) ON DELETE CASCADE
 );
  
-CREATE TABLE replies (
+CREATE TABLE IF NOT EXISTS replies (
    id         INT AUTO_INCREMENT PRIMARY KEY,
    post_id    INT NOT NULL,
    user_id    INT NOT NULL,
