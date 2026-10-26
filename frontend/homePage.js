@@ -226,7 +226,7 @@ async function logout() {
 }
 
 // validate session on homePage
-//validateSession();
+validateSession();
 
 // Handle logout link
 document.getElementById("logout-link").addEventListener("click", function (event) {

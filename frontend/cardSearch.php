@@ -88,7 +88,7 @@ try {
 
     echo json_encode([
         "success" => false,
-        "message" => "Authentication service is unavailable."
+        "message" => "Authentication service is unavailable: " . $error->getMessage()
     ]);
     exit;
 }
@@ -125,7 +125,7 @@ try {
 
     echo json_encode([
         "success" => false,
-        "message" => "Pokemon search service is currently unavailable."
+        "message" => "Pokemon search service is currently unavailable: " . $error->getMessage()
     ]);
 }
 
