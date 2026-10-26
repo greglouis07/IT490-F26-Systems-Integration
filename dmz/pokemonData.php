@@ -2,9 +2,6 @@
 //Function
 function getCardPrices($cardId)
 {
-
-
-
 $ini_path = 
 __DIR__ ."/pokemonApi.ini";
 if(!file_exists($ini_path)) {
@@ -85,7 +82,20 @@ function cardSearch($cardName)
 	$api_Url = $apiConfig['pokemon_api']['api_url'];
 	$api_Key = $apiConfig['pokemon_api']['api_key'];
 
-	//glb9 temporary test code
-	return ['success' => false, 'message' => "cardSearch under construction"];
+	//glb9 search URL /search?q=name&game=pokemon
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL< $api_Url / '/search?q=' . urlencode($cardName) . '&game=pokemon');
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, ["X-API-Key: " . $api_Key]);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+	
+	$apiResponse = curl_exec($ch);
+	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	curl_close($ch);
+	
+	//glb9 temporary test
+	return ['success' => false, 'message' => "cardSearch HTTP $httpCode"];
+	
 }
+
 ?>
