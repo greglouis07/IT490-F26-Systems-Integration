@@ -16,5 +16,5 @@ $request['cardName'] = isset($argv[1]) ? $argv[1] : "charizard";
 
 $response = $client->send_request($request);
 
-echo json_encode($response, JSON_PRETTYPRINT) . PHP_EOL;
+echo json_encode($response, JSON_PRETTY_PRINT) . PHP_EOL;
 ?>
