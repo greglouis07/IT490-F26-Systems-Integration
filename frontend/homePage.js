@@ -6,11 +6,8 @@ const searchMessage = document.getElementById("search-message");
 const collectionContainer = document.getElementById("my-collection");
 const collectionValue = document.getElementById("collection-value");
 
-const API_URL = "https://api.tcgdex.net/v2/en";
 
-let collection = JSON.parse(
-    localStorage.getItem("pokemonCollection") || "[]"
-);
+let collection = [];
 
 function saveCollection() {
     localStorage.setItem(
@@ -33,10 +30,30 @@ function displayCollection() {
         const name = document.createElement("h3");
         name.textContent = card.name;
 
+
         const image = document.createElement("img");
-        image.src = card.image + "/low.webp";
+
+
+        image.src = card.image
+            ? (card.image.includes("assets.tcgdex.net")
+                ? card.image + "/low.webp"
+                : card.image)
+            : "https://placehold.co/180x250?text=No+Image";
+
         image.alt = card.name;
         image.width = 120;
+
+        image.onerror = function () {
+            this.onerror = null;
+            this.src = "https://placehold.co/180x250?text=No+Image";
+        };
+
+
+        // Use a placeholder if the image URL fails to load
+        image.onerror = function () {
+            this.onerror = null;
+            this.src = "https://placehold.co/180x250?text=No+Image";
+        };
 
         const removeButton = document.createElement("button");
         removeButton.textContent = "Remove";
@@ -63,15 +80,27 @@ async function searchCards(query) {
     searchResults.innerHTML = "";
 
     try {
-        const response = await fetch(
-            `${API_URL}/cards?name=${encodeURIComponent(query)}`
-        );
 
-        if (!response.ok) {
-            throw new Error("Could not retrieve cards.");
+        const response = await fetch("cardSearch.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({ cardName: query })
+        });
+
+        const result = await response.json();
+
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Could not retrieve cards.");
         }
 
-        const cards = await response.json();
+        if (!Array.isArray(result.data)) {
+            throw new Error("Invalid card search response.");
+        }
+
+        const cards = result.data;
+
 
         searchMessage.textContent = cards.length
             ? `Found ${cards.length} cards.`
@@ -83,12 +112,20 @@ async function searchCards(query) {
             const name = document.createElement("h3");
             name.textContent = card.name;
 
+
             const image = document.createElement("img");
-            if (card.image) {
-                image.src = card.image + "/low.webp";
-                image.alt = card.name;
-                image.width = 120;
-            }
+
+            image.src = card.image_url ||
+                "https://placehold.co/180x250?text=No+Image";
+
+            image.alt = card.name;
+            image.width = 120;
+
+            image.onerror = function () {
+                this.onerror = null;
+                this.src = "https://placehold.co/180x250?text=No+Image";
+            };
+
 
             const addButton = document.createElement("button");
             addButton.textContent = "Add to Collection";
@@ -103,31 +140,33 @@ async function searchCards(query) {
                     return;
                 }
 
+
                 collection.push({
                     id: card.id,
                     name: card.name,
-                    image: card.image || ""
+                    image: card.image_url || "",
+                    set_name: card.set_name,
+                    number: card.number,
+                    market_price: card.market_price
                 });
+
 
                 saveCollection();
                 displayCollection();
             });
 
-            cardElement.append(name);
-
-            if (card.image) {
-                cardElement.appendChild(image);
-            }
-
-            cardElement.appendChild(addButton);
+            cardElement.append(name, image, addButton);
             searchResults.appendChild(cardElement);
         });
 
-    } catch (error) {
-        searchMessage.textContent =
-            "Search failed. Please try again.";
-        console.error(error);
-    }
+    
+} catch (error) {
+    searchMessage.textContent =
+        `Search failed: ${error.message}`;
+
+    console.error("Card search error:", error);
+}
+
 }
 
 searchForm.addEventListener("submit", event => {

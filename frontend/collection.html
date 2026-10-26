@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Collection | Git Happens</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="header-container">
+            <div class="site-brand">
+                <h1>Pokemon Card Collection</h1>
+            </div>
+
+            <nav class="site-nav">
+                <a href="homePage.html">Search Cards</a>
+                <a href="collection.html">My Collection</a>
+                <a href="index.html" id="logout-link">Log Out</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="homepage-container">
+        <section>
+            <h2>My Collection</h2>
+            <p>View and manage your saved Pokémon cards.</p>
+        </section>
+
+        <section class="collection-stats">
+            <div>
+                <h3>Total Cards</h3>
+                <p id="total-cards">0</p>
+            </div>
+
+            <div>
+                <h3>Collection Value</h3>
+                <p id="collection-value">$0.00</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Your Cards</h2>
+            <div id="my-collection">
+                <p>No Pokémon cards added yet.</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="collection.js"></script>
+</body>
+
+</html>

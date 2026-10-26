@@ -1,30 +1,36 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Git Happens | Pokémon Collection</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <main>
-        <h1>Git Happens</h1>
-        <p>Pokémon Card Collection</p>
+    <header class="site-header">
+        <div class="header-container">
+            <div class="site-brand">
+                <h1> Pokemon Card Collection</h1>
+            </div>
 
+            <nav class="site-nav">
+                <a href="homePage.html">Search Cards</a>
+                <a href="collection.html">My Collection</a>
+                <a href="index.html" id="logout-link">Log Out</a>
+                <a href ="discussion.html">Discussion Board</a>
+            </nav>
+        </div>
+    </header>
+    <main class="homepage-container">
         <!-- Search Section -->
         <section>
             <h2>Search Pokémon Cards</h2>
 
             <form id="card-search-form">
-                <input
-                    type="text"
-                    id="pokemon-search"
-                    placeholder="Search Pokémon cards..."
-                    required
-                >
+                <input type="text" id="pokemon-search" placeholder="Search Pokémon cards..." required>
                 <button type="submit">Search</button>
             </form>
 
@@ -39,20 +45,16 @@
         </section>
 
         <!-- My Collection -->
-        <section>
+        <section id="collection-section">
             <h2>My Collection</h2>
             <div id="my-collection">
                 <p>No Pokémon cards added yet.</p>
             </div>
         </section>
 
-        <p>
-            <a href="index.html" id="logout-link">
-                Log out
-            </a>
-        </p>
     </main>
 
     <script src="homePage.js"></script>
 </body>
+
 </html>
