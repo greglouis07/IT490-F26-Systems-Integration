@@ -2,9 +2,6 @@
 //Function
 function getCardPrices($cardId)
 {
-
-
-
 $ini_path = 
 __DIR__ ."/pokemonApi.ini";
 if(!file_exists($ini_path)) {
@@ -67,5 +64,56 @@ if(json_last_error() !==JSON_ERROR_NONE)
 }
 //output success summary
 return ['success' => true, 'message' => 'OK', 'code' => 0, 'data' => $data['data']];
+}
+
+//glb9 card_search checks card name with TCG API
+function cardSearch($cardName)
+{
+	$ini_path = __DIR__ . "/pokemonApi.ini";
+	if(!file_exists($ini_path)) {
+		return ['success' => false,
+		'message' => "No config file",
+		'code' => 9
+		];
+	}
+
+	$apiConfig = parse_ini_file($ini_path, true);
+
+	$api_Url = $apiConfig['pokemon_api']['api_url'];
+	$api_Key = $apiConfig['pokemon_api']['api_key'];
+
+	//glb9 search URL /search?q=name&game=pokemon
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $api_Url . '/search?q=' . urlencode($cardName) . '&game=pokemon');
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, ["X-API-Key: " . $api_Key]);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+	
+	$apiResponse = curl_exec($ch);
+	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	
+	//glb9 check network than HTTP
+	if(curl_errno($ch))
+	{
+		$errorMsg = curl_error($ch);
+		curl_close($ch);
+		return ['success' => false, 'message' => "curl error: $errorMsg", 'code' => 9];
+	}
+	curl_close($ch);
+
+	//Api answer error
+	if($httpCode !== 200)
+	{
+		return ['success' => false, 'message' => "API request failed with HTTP $httpCode", 'code' => 9];
+	}
+
+	//glb9 JSON reply > PHP
+	$data = json_decode($apiResponse, true);
+	if(json_last_error() !== JSON_ERROR_NONE)
+	{
+		return ['success' => false, 'message' => "JSON decoding error: " . json_last_error_msg(), 'code' => 9];
+	}
+
+	return['success' => true, 'message' => 'success', 'data' => $data['data']];
 }
 ?>
