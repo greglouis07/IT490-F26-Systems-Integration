@@ -48,3 +48,16 @@ CREATE TABLE IF NOT EXISTS cards (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_cards_clean_name (clean_name)
 );
+
+-- glb9 watchlist table
+CREATE TABLE IF NOT EXISTS watchlist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    card_id INT NOT NULL, -- TCG API card id
+    target_price DECIMAL(10,2) NOT NULL,
+    alerted_at DATETIME NULL, -- set when alert is sent
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_watchlist_user_card (user_id, card_id),
+    CONSTRAINT fk_watchlist_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_watchlist_card FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE
+);
