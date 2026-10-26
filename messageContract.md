@@ -12,7 +12,7 @@
 - databaseServer: databaseExchange > databaseQueue answered by rabbitMQServer.php
     Types: register, login, validate_session, logout
 - dmzServer: dmzExchange > dmzQueue answered by dmzServer.php
-    Types: ping
+    Types: ping, get_card_prices, card_search
 
 ## Error codes
 - 1: missing or unknown request type 
@@ -46,3 +46,13 @@ Failure codes: 2, 5, 9
 Request: type
 Success: success, message 
 Failure codes: 1
+
+## car_search (dmzServer)
+Request: type, cardName
+Success: success, message, data (matching cards and id's)
+Failure codes: 2, 9
+
+## get_card_prices (dmzServer)
+Request: type, cardId (TCG API ID)
+Success: success, message, data
+Failure codes: 2, 9
