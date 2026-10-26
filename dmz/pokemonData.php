@@ -104,7 +104,7 @@ function cardSearch($cardName)
 	//Api answer error
 	if($httpCode !== 200)
 	{
-		return ['success' => false, 'message' => "API request failed with HTTP", 'code' => 9];
+		return ['success' => false, 'message' => "API request failed with HTTP $httpCode", 'code' => 9];
 	}
 
 	//glb9 JSON reply > PHP
@@ -114,6 +114,6 @@ function cardSearch($cardName)
 		return ['success' => false, 'message' => "JSON decoding error: " . json_last_error_msg(), 'code' => 9];
 	}
 
-	['success' => true, 'message' => 'success', 'data' => $data['data']];
+	return['success' => true, 'message' => 'success', 'data' => $data['data']];
 }
 ?>
