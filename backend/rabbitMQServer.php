@@ -489,6 +489,30 @@ function doAddWatch($sessionId, $cardId, $targetPrice)
     return array("success" => true, "message" => "Added to watchlist");
 }
 
+//glb9 every card and current price
+function doGetWatchlist($sessionId)
+{
+    $mysqli = dbConnect();
+    $user = sessionUser($mysqli, $sessionId);
+    if (!$user) { $mysqli->close(); return badSession(); }
+
+    $stmt = $mysqli->prepare(
+        "SELECT w.card_id, c.name, c.set_name, c.number, c.image_url,
+                c.market_price, w.target_price, w.alerted_at, w.created_at
+         FROM watchlist w
+         JOIN cards c ON c.id = w.card_id
+         WHERE w.user_id = ?
+         ORDER BY w.created_at DESC"
+    );
+    $stmt->bind_param("i", $user['id']);
+    $stmt->execute();
+    $watchlist = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    $mysqli->close();
+
+    return array("success" => true, "message" => "Watchlist loaded", "watchlist" => $watchlist);
+}
+
 function requestProcessor($request)
 {
     echo "received request" . PHP_EOL;
