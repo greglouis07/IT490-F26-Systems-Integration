@@ -446,3 +446,89 @@ body {
 .board [hidden] {
     display: none !important;
 }
+
+/* Pokémon Card Details Page */
+
+.card-details-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 30px;
+}
+
+.card-details-container h1 {
+    font-size: 32px;
+    margin-bottom: 30px;
+}
+
+.card-details-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 50px;
+    margin-top: 30px;
+}
+
+#card-image {
+    width: 300px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.card-information {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-information h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eeeeee;
+}
+
+.card-information p {
+    font-size: 16px;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.card-information h2:not(:first-child) {
+    margin-top: 30px;
+}
+
+/* Responsive layout for smaller screens */
+
+@media (max-width: 768px) {
+    .card-details-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 25px;
+    }
+
+    .card-information {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .card-details-container {
+        padding: 20px;
+    }
+}
+
+/* Card Details Heading and Back Link */
+
+.card-details-container h1 {
+    color: white;
+}
+
+.card-details-container > a {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.card-details-container > a:hover {
+    color: #ffcc00;
+}
