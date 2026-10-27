@@ -633,12 +633,29 @@ function requestProcessor($request)
                 $request['title'] ?? "",
                 $request['body'] ?? ""
             );
- 
+
         case "create_reply":
             return doCreateReply(
                 $request['sessionId'] ?? "",
                 $request['postId'] ?? 0,
                 $request['body'] ?? ""
+            );
+
+        //glb9 watchlist requests
+        case "add_watch":
+            return doAddWatch(
+                $request['sessionId'] ?? "",
+                $request['cardId'] ?? 0,
+                $request['targetPrice'] ?? 0
+            );
+
+        case "get_watchlist":
+            return doGetWatchlist($request['sessionId'] ?? "");
+
+        case "remove_watch":
+            return doRemoveWatch(
+                $request['sessionId'] ?? "",
+                $request['cardId'] ?? 0
             );
         
         //glb9
