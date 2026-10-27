@@ -153,3 +153,296 @@ body {
         font-size: 21px;
     }
 }
+
+/* Homepage Header */
+.site-header {
+    background-color: #ffffff;
+    padding: 20px 40px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Layout */
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Website Title */
+.site-brand h1 {
+    font-size: 24px;
+    color: #1e3a8a;
+}
+
+/* Navigation Links */
+.site-nav {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.site-nav a {
+    color: #334155;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.site-nav a:hover {
+    color: #2563eb;
+}
+
+/* Main Homepage Container */
+.homepage-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Mobile Header */
+@media (max-width: 600px) {
+    .site-header {
+        padding: 20px;
+    }
+
+    .header-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .site-nav {
+        justify-content: center;
+    }
+}
+
+
+/* Homepage Content */
+.homepage-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    color: #ffffff;
+}
+
+/* Homepage Sections */
+.homepage-container section {
+    margin-bottom: 40px;
+}
+
+/* Section Headings */
+.homepage-container h2 {
+    font-size: 26px;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+/* Collection Value */
+#collection-value {
+    font-size: 32px;
+    color: #facc15;
+    margin-top: 10px;
+}
+
+
+/* Pokemon Search Form */
+#card-search-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 700px;
+    margin-top: 20px;
+}
+
+/* Search Input */
+#pokemon-search {
+    flex: 1;
+    min-width: 0;
+    padding: 16px 20px;
+    font-size: 16px;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    outline: none;
+    background-color: #ffffff;
+    color: #0f172a;
+}
+
+/* Highlight Input When Selected */
+#pokemon-search:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Search Button */
+#card-search-form button {
+    padding: 16px 28px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Button Hover Effect */
+#card-search-form button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Mobile Search Bar */
+@media (max-width: 480px) {
+    #card-search-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #card-search-form button {
+        width: 100%;
+    }
+}
+
+
+/* Pokemon Search Results Grid */
+#card-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
+    margin-top: 25px;
+}
+
+/* Individual Search Result Cards */
+#card-results > div {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    color: #0f172a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Pokemon Card Images */
+#card-results img {
+    width: 100%;
+    max-width: 180px;
+    height: 250px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 15px;
+}
+
+/* Pokemon Card Names */
+#card-results h3 {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #1e293b;
+}
+
+/* Add to Collection Buttons */
+#card-results button {
+    width: 100%;
+    padding: 12px;
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Button Hover Effect */
+#card-results button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Discussion Board */
+
+.board {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+}
+
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.board-header h1 {
+    margin: 0;
+}
+
+.board-button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.board-button:hover {
+    background: #1d4ed8;
+}
+
+.board-button.secondary {
+    background: #64748b;
+}
+
+.board-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.board-form input,
+.board-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font: inherit;
+    color: #000000;
+    background: white;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.post-list,
+.reply-list {
+    list-style: none;
+    padding: 0;
+}
+
+.post-list li,
+.reply-list li,
+.post-full {
+    padding: 20px;
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+}
+
+.muted,
+.meta {
+    opacity: 0.75;
+}
+
+.board [hidden] {
+    display: none !important;
+}

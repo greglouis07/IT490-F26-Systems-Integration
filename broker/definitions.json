@@ -1,0 +1,45 @@
+{
+"vhosts": [
+  {"name": "githappensHost"},
+  {"name": "gregDev"},
+  {"name": "aleenDev"},
+  {"name": "markDev"},
+  {"name": "rahulDev"}
+],
+"exchanges": [
+  {"name": "databaseExchange", "vhost": "githappensHost", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {}},
+  {"name": "dmzExchange", "vhost": "githappensHost", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {}},
+  {"name": "databaseExchange", "vhost": "gregDev", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {}},
+  {"name": "dmzExchange", "vhost": "gregDev", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {}},
+  {"name": "databaseExchange", "vhost": "aleenDev", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {}},
+  {"name": "dmzExchange", "vhost": "aleenDev", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {}},
+  {"name": "databaseExchange", "vhost": "markDev", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {}},
+  {"name": "dmzExchange", "vhost": "markDev", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {}},
+  {"name": "databaseExchange", "vhost": "rahulDev", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {}},
+  {"name": "dmzExchange", "vhost": "rahulDev", "type": "topic", "durable": true, "auto_delete": false, "internal": false, "arguments": {}}
+],
+"queues": [
+  {"name": "databaseQueue", "vhost": "githappensHost", "durable": true, "auto_delete": false, "arguments": {"x-queue-type": "classic"}},
+  {"name": "dmzQueue", "vhost": "githappensHost", "durable": true, "auto_delete": false, "arguments": {"x-queue-type": "classic"}},
+  {"name": "databaseQueue", "vhost": "gregDev", "durable": true, "auto_delete": false, "arguments": {"x-queue-type": "classic"}},
+  {"name": "dmzQueue", "vhost": "gregDev", "durable": true, "auto_delete": false, "arguments": {"x-queue-type": "classic"}},
+  {"name": "databaseQueue", "vhost": "aleenDev", "durable": true, "auto_delete": false, "arguments": {"x-queue-type": "classic"}},
+  {"name": "dmzQueue", "vhost": "aleenDev", "durable": true, "auto_delete": false, "arguments": {"x-queue-type": "classic"}},
+  {"name": "databaseQueue", "vhost": "markDev", "durable": true, "auto_delete": false, "arguments": {"x-queue-type": "classic"}},
+  {"name": "dmzQueue", "vhost": "markDev", "durable": true, "auto_delete": false, "arguments": {"x-queue-type": "classic"}},
+  {"name": "databaseQueue", "vhost": "rahulDev", "durable": true, "auto_delete": false, "arguments": {"x-queue-type": "classic"}},
+  {"name": "dmzQueue", "vhost": "rahulDev", "durable": true, "auto_delete": false, "arguments": {"x-queue-type": "classic"}}
+],
+"bindings": [
+  {"source": "databaseExchange", "vhost": "githappensHost", "destination": "databaseQueue", "destination_type": "queue", "routing_key": "*", "arguments": {}},
+  {"source": "dmzExchange", "vhost": "githappensHost", "destination": "dmzQueue", "destination_type": "queue", "routing_key": "*", "arguments": {}},
+  {"source": "databaseExchange", "vhost": "gregDev", "destination": "databaseQueue", "destination_type": "queue", "routing_key": "*", "arguments": {}},
+  {"source": "dmzExchange", "vhost": "gregDev", "destination": "dmzQueue", "destination_type": "queue", "routing_key": "*", "arguments": {}},
+  {"source": "databaseExchange", "vhost": "aleenDev", "destination": "databaseQueue", "destination_type": "queue", "routing_key": "*", "arguments": {}},
+  {"source": "dmzExchange", "vhost": "aleenDev", "destination": "dmzQueue", "destination_type": "queue", "routing_key": "*", "arguments": {}},
+  {"source": "databaseExchange", "vhost": "markDev", "destination": "databaseQueue", "destination_type": "queue", "routing_key": "*", "arguments": {}},
+  {"source": "dmzExchange", "vhost": "markDev", "destination": "dmzQueue", "destination_type": "queue", "routing_key": "*", "arguments": {}},
+  {"source": "databaseExchange", "vhost": "rahulDev", "destination": "databaseQueue", "destination_type": "queue", "routing_key": "*", "arguments": {}},
+  {"source": "dmzExchange", "vhost": "rahulDev", "destination": "dmzQueue", "destination_type": "queue", "routing_key": "*", "arguments": {}}
+]
+}
