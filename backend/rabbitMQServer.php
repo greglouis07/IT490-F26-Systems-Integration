@@ -444,7 +444,51 @@ function doCreateReply($sessionId, $postId, $body)
  
     return array("success" => true, "message" => "Reply posted");
 }
- 
+
+//glb9 watchlist handlers: add a card, change target price of card
+function doAddWatch($sessionId, $cardId, $targetPrice)
+{
+    if (!is_numeric($cardId) || !is_numeric($targetPrice))
+        return array("success" => false, "message" => "Invalid watchlist entry", "code" => 2);
+
+    $cardId = (int) $cardId;
+    $targetPrice = round((float) $targetPrice, 2);
+
+    if ($cardId <= 0 || $targetPrice <= 0 || $targetPrice > 99999999.99)
+        return array("success" => false, "message" => "Invalid card or target price", "code" => 2);
+
+    $mysqli = dbConnect();
+    $user = sessionUser($mysqli, $sessionId);
+    if (!$user) 
+    {
+        mysqli->close(); return badSession();
+    }
+
+    $stmt = $mysqli->prepare("SELECT id FROM cards WHERE id = ?");
+    $stmt->bind_param("i", $cardId);
+    $stmt->execute();
+    $exists = $stmt->get_result()-fetch_assoc();
+    $stmt->close();
+
+    if(!$exists)
+    {
+        $mysqli->close();
+        return array("success" => false, "message" => "Card not found", "code" => 7);
+    }
+
+    //glb9 update price if its being watched, reset alert
+    $stmt = $mysqli->prepare(
+        "INSERT INTO watchlist (user_id, card_id, target_price) VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE target_price = VALUES(target_price), alerted_at = NULL"
+    );
+    $stmt->bind_param("iid", $user['id'], $cardId, $targetPrice);
+    $stmt->execute();
+    $stmt->close();
+    $mysqli->close();
+
+    return array("success" => true, "message" => "Added to watchlist");
+}
+
 function requestProcessor($request)
 {
     echo "received request" . PHP_EOL;
