@@ -81,6 +81,9 @@ try {
         exit;
     }
 
+    //glb9 FIXING CLASH WITH CARD SEARCH close session client
+    unset($authClient);
+
 } catch (Throwable $error) {
     error_log("Card search session error: " . $error->getMessage());
 
