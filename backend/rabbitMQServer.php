@@ -513,6 +513,31 @@ function doGetWatchlist($sessionId)
     return array("success" => true, "message" => "Watchlist loaded", "watchlist" => $watchlist);
 }
 
+//glb9 watchlist: stop watching a card
+function doRemoveWatch($sessionId, $cardId)
+{
+    if (!is_numeric($cardId) || (int) $cardId <= 0)
+        return array("success" => false, "message" => "Invalid card", "code" => 2);
+
+    $cardId = (int) $cardId;
+
+    $mysqli = dbConnect();
+    $user = sessionUser($mysqli, $sessionId);
+    if (!$user) { $mysqli->close(); return badSession(); }
+
+    $stmt = $mysqli->prepare("DELETE FROM watchlist WHERE user_id = ? AND card_id = ?");
+    $stmt->bind_param("ii", $user['id'], $cardId);
+    $stmt->execute();
+    $removed = $stmt->affected_rows;
+    $stmt->close();
+    $mysqli->close();
+
+    if ($removed === 0)
+        return array("success" => false, "message" => "Card is not on your watchlist", "code" => 7);
+
+    return array("success" => true, "message" => "Removed from watchlist");
+}
+
 function requestProcessor($request)
 {
     echo "received request" . PHP_EOL;
