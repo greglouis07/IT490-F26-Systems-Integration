@@ -538,6 +538,61 @@ function doRemoveWatch($sessionId, $cardId)
     return array("success" => true, "message" => "Removed from watchlist");
 }
 
+//glb9 card search: ask the DMZ, save the cards, send the same answer back
+function doCardSearch($cardName)
+{
+    if (!is_string($cardName) || trim($cardName) === "")
+        return array("success" => false, "message" => "Missing cardName", "code" => 2);
+
+    //glb9 same timeout as cardSearch.php so a down DMZ can't freeze the consumer
+    ini_set("amqp.read_timeout", "10");
+    $client = new rabbitMQClient("githappensRabbitMQ.ini", "dmzServer");
+    $response = $client->send_request(array("type" => "card_search", "cardName" => trim($cardName)));
+
+    if (!is_array($response) || empty($response['success']) || !isset($response['data']) || !is_array($response['data']))
+        return $response;
+
+    //glb9 save every card so watch and collection can find
+    try
+    {
+        $mysqli = dbConnect();
+        $stmt = $mysqli->prepare(
+            "INSERT INTO cards (id, name, clean_name, set_name, number, rarity, printing, image_url, market_price, market_price_as_of)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE market_price = VALUES(market_price), market_price_as_of = VALUES(market_price_as_of)"
+        );
+
+        foreach ($response['data'] as $card)
+        {
+            if (!isset($card['id'], $card['name'])) continue;
+
+            $id = (int) $card['id'];
+            $name = $card['name'];
+            $cleanName = $card['clean_name'] ?? strtolower($name);
+            $setName = $card['set_name'] ?? null;
+            $number = $card['number'] ?? null;
+            $rarity = $card['rarity'] ?? null;
+            $printing = $card['printing'] ?? null;
+            $imageUrl = $card['image_url'] ?? null;
+            $marketPrice = $card['market_price'] ?? null;
+            $priceDate = $card['market_price_as_of'] ?? null;
+
+            $stmt->bind_param("isssssssds", $id, $name, $cleanName, $setName, $number,
+                $rarity, $printing, $imageUrl, $marketPrice, $priceDate);
+            $stmt->execute();
+        }
+
+        $stmt->close();
+        $mysqli->close();
+    }
+    catch (Throwable $e)
+    {
+        echo "card save failed: " . $e->getMessage() . PHP_EOL;
+    }
+
+    return $response;
+}
+
 function requestProcessor($request)
 {
     echo "received request" . PHP_EOL;
@@ -657,6 +712,9 @@ function requestProcessor($request)
                 $request['sessionId'] ?? "",
                 $request['cardId'] ?? 0
             );
+
+        case "card_search":
+            return doCardSearch($request['cardName'] ?? "");    
         
         //glb9
         default:

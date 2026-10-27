@@ -1,4 +1,5 @@
--- glb9 create sessions table for aleens backend sudo mysql DB_NAME < backend/sessions.sql
+-- glb9 run on the database machine, sudo mysql DB_NAME < backend/database.sql
+
 CREATE TABLE IF NOT EXISTS sessions (
     sessionId CHAR(64) NOT NULL,
     user_id INT NOT NULL,
