@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Happens | Marketplace</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="header-container">
+            <div class="site-brand">
+                <h1>Pokemon Card Collection</h1>
+            </div>
+
+            <nav class="site-nav">
+                <a href="homePage.html">Search Cards</a>
+                <a href="collection.html">My Collection</a>
+                <a href="marketPlace.html">Marketplace</a>
+                <a href="discussion.html">Discussion Board</a>
+                <a href="index.html" id="logout-link">Log Out</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="homepage-container">
+        <section>
+            <h2>Pokemon Card Marketplace</h2>
+            <p>Buy and sell Pokemon cards using virtual money.</p>
+        </section>
+
+        <section>
+            <h2>My Virtual Wallet</h2>
+            <h3 id="wallet-balance">$0.00</h3>
+        </section>
+
+
+        <section>
+            <h2>Buy Pokemon Cards</h2>
+            <p>Search for Pokemon cards to purchase using virtual money.</p>
+
+            <form id="marketplace-search-form">
+                <input type="text" id="marketplace-search" placeholder="Search Pokemon cards..." required>
+                <button type="submit">Search</button>
+            </form>
+
+            <p id="marketplace-message"></p>
+
+            <div id="marketplace-cards">
+                <p>Search for a Pokemon card to get started.</p>
+            </div>
+        </section>
+
+
+        <section>
+            <h2>Sell My Cards</h2>
+            <div id="sell-cards">
+                <p>Your collection will appear here.</p>
+            </div>
+        </section>
+
+    </main>
+    <script src="marketPlace.js"></script>
+</body>
+
+</html>
