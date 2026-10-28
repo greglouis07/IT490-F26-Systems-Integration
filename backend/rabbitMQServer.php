@@ -544,14 +544,10 @@ function doCardSearch($cardName)
     if (!is_string($cardName) || trim($cardName) === "")
         return array("success" => false, "message" => "Missing cardName", "code" => 2);
 
-    echo "asking DMZ" . PHP_EOL;
-
     //glb9 same timeout as cardSearch.php so a down DMZ can't freeze the consumer
     ini_set("amqp.read_timeout", "5");
     $client = new rabbitMQClient("githappensRabbitMQ.ini", "dmzServer");
     $response = $client->send_request(array("type" => "card_search", "cardName" => trim($cardName)));
-
-    echo "DMZ answered: " . (is_array($response) ? "yes" : "no") . PHP_EOL;
 
     if (!is_array($response) || empty($response['success']) || !isset($response['data']) || !is_array($response['data']))
         return $response;
@@ -593,8 +589,6 @@ function doCardSearch($cardName)
     {
         echo "card save failed: " . $e->getMessage() . PHP_EOL;
     }
-
-    echo "card search done" . PHP_EOL;
 
     return $response;
 }
