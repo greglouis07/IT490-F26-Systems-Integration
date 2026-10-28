@@ -38,19 +38,7 @@ function savePurchasedCards() {
     );
 }
 
-// Load previous Marketplace transactions
-let transactions = JSON.parse(
-    localStorage.getItem("marketplaceTransactions") || "[]"
-);
-
-// Save Marketplace transaction history
-function saveTransactions() {
-    localStorage.setItem(
-        "marketplaceTransactions",
-        JSON.stringify(transactions)
-    );
-}
-
+// Marketplace search elements
 const marketplaceSearchForm = document.getElementById("marketplace-search-form");
 const marketplaceSearchInput = document.getElementById("marketplace-search");
 const marketplaceCards = document.getElementById("marketplace-cards");
@@ -79,6 +67,11 @@ function displaySellCards() {
             "https://placehold.co/180x250?text=No+Image";
         image.alt = card.name;
         image.width = 120;
+
+        image.onerror = function () {
+            this.onerror = null;
+            this.src = "https://placehold.co/180x250?text=No+Image";
+        };
 
         const price = document.createElement("p");
         price.textContent = "Market Price: $" +
@@ -113,20 +106,10 @@ function displaySellCards() {
             balance = Math.round((balance + sellingPrice) * 100) / 100;
             saveWallet();
 
-            // Record the sale in transaction history
-            transactions.push({
-                type: "Sell",
-                cardId: card.id,
-                cardName: card.name,
-                amount: sellingPrice,
-                date: new Date().toLocaleString()
-            });
-
-            saveTransactions();
-
             // Refresh the Sell My Cards section
             displaySellCards();
 
+            // Confirm the sale
             alert(`Successfully sold ${card.name} for $${sellingPrice.toFixed(2)}!`);
         });
 
@@ -135,8 +118,9 @@ function displaySellCards() {
     });
 }
 
-// Display owned marketplace cards when the page loads
+// Display purchased cards when the page loads
 displaySellCards();
+
 // Search for Pokemon cards available to purchase
 async function searchMarketplaceCards(query) {
     marketplaceMessage.textContent = "Searching...";
@@ -195,13 +179,17 @@ async function searchMarketplaceCards(query) {
                     ? "Price: $" + marketPrice.toFixed(2)
                     : "Price unavailable";
 
+            // Create Buy Card button
             const buyButton = document.createElement("button");
             buyButton.textContent = "Buy Card";
 
+            // Disable buying if the price is unavailable
             buyButton.disabled =
                 !Number.isFinite(marketPrice) || marketPrice <= 0;
 
             buyButton.addEventListener("click", () => {
+
+                // Check if the user has enough money
                 if (balance < marketPrice) {
                     alert("Insufficient funds to purchase this card.");
                     return;
@@ -219,21 +207,9 @@ async function searchMarketplaceCards(query) {
 
                 savePurchasedCards();
 
-
                 // Deduct the card price from the wallet
                 balance = Math.round((balance - marketPrice) * 100) / 100;
                 saveWallet();
-
-                // Record the purchase in transaction history
-                transactions.push({
-                    type: "Buy",
-                    cardId: card.id,
-                    cardName: card.name,
-                    amount: marketPrice,
-                    date: new Date().toLocaleString()
-                });
-
-                saveTransactions();
 
                 // Refresh the Sell My Cards section
                 displaySellCards();
@@ -264,4 +240,3 @@ marketplaceSearchForm.addEventListener("submit", event => {
         searchMarketplaceCards(query);
     }
 });
-
