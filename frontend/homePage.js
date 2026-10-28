@@ -5,6 +5,7 @@ const searchMessage = document.getElementById("search-message");
 const collectionContainer = document.getElementById("my-collection");
 const collectionValue = document.getElementById("collection-value");
 
+<<<<<<< Updated upstream
 let collection = [];
 
 async function collectionRequest(action, cardId) {
@@ -14,6 +15,10 @@ async function collectionRequest(action, cardId) {
        credentials: "same-origin",
        body: JSON.stringify({ action, cardId })
    });
+=======
+
+let collection = [];
+>>>>>>> Stashed changes
 
    return response.json();
 }
@@ -42,8 +47,38 @@ function displayCollection() {
        const name = document.createElement("h3");
        name.textContent = card.name + " x" + card.quantity;
 
+<<<<<<< Updated upstream
 
        const image = document.createElement("img");
+=======
+
+        const image = document.createElement("img");
+
+
+        image.src = card.image
+            ? (card.image.includes("assets.tcgdex.net")
+                ? card.image + "/low.webp"
+                : card.image)
+            : "https://placehold.co/180x250?text=No+Image";
+
+        image.alt = card.name;
+        image.width = 120;
+
+        image.onerror = function () {
+            this.onerror = null;
+            this.src = "https://placehold.co/180x250?text=No+Image";
+        };
+
+
+        // Use a placeholder if the image URL fails to load
+        image.onerror = function () {
+            this.onerror = null;
+            this.src = "https://placehold.co/180x250?text=No+Image";
+        };
+
+        const removeButton = document.createElement("button");
+        removeButton.textContent = "Remove";
+>>>>>>> Stashed changes
 
        image.src = card.image
            ? (card.image.includes("assets.tcgdex.net")
@@ -85,6 +120,7 @@ async function searchCards(query) {
    searchMessage.textContent = "Searching...";
    searchResults.innerHTML = "";
 
+<<<<<<< Updated upstream
    try {
 
        const response = await fetch("cardSearch.php", {
@@ -95,6 +131,30 @@ async function searchCards(query) {
        });
 
        const result = await response.json();
+=======
+    try {
+
+        const response = await fetch("cardSearch.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({ cardName: query })
+        });
+
+        const result = await response.json();
+
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Could not retrieve cards.");
+        }
+
+        if (!Array.isArray(result.data)) {
+            throw new Error("Invalid card search response.");
+        }
+
+        const cards = result.data;
+
+>>>>>>> Stashed changes
 
 
        if (!response.ok || !result.success) {
@@ -105,7 +165,24 @@ async function searchCards(query) {
            throw new Error("Invalid card search response.");
        }
 
+<<<<<<< Updated upstream
        const cards = result.data;
+=======
+
+            const image = document.createElement("img");
+
+            image.src = card.image_url ||
+                "https://placehold.co/180x250?text=No+Image";
+
+            image.alt = card.name;
+            image.width = 120;
+
+            image.onerror = function () {
+                this.onerror = null;
+                this.src = "https://placehold.co/180x250?text=No+Image";
+            };
+
+>>>>>>> Stashed changes
 
        searchMessage.textContent = cards.length
            ? `Found ${cards.length} cards.`
@@ -117,6 +194,7 @@ async function searchCards(query) {
            const name = document.createElement("h3");
            name.textContent = card.name;
 
+<<<<<<< Updated upstream
            const image = document.createElement("img");
 
            image.src = card.image_url ||
@@ -155,6 +233,35 @@ async function searchCards(query) {
    console.error("Card search error:", error);
 }
 
+=======
+
+                collection.push({
+                    id: card.id,
+                    name: card.name,
+                    image: card.image_url || "",
+                    set_name: card.set_name,
+                    number: card.number,
+                    market_price: card.market_price
+                });
+
+
+                saveCollection();
+                displayCollection();
+            });
+
+            cardElement.append(name, image, addButton);
+            searchResults.appendChild(cardElement);
+        });
+
+    
+} catch (error) {
+    searchMessage.textContent =
+        `Search failed: ${error.message}`;
+
+    console.error("Card search error:", error);
+}
+
+>>>>>>> Stashed changes
 }
 
 searchForm.addEventListener("submit", event => {
@@ -214,7 +321,7 @@ async function logout() {
 }
 
 // validate session on homePage
-validateSession();
+//validateSession();
 
 // Handle logout link
 document.getElementById("logout-link").addEventListener("click", function (event) {
