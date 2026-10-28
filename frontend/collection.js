@@ -57,17 +57,16 @@ function displayCollection() {
            this.src = "https://placehold.co/180x250?text=No+Image";
        };
 
-       const details = document.createElement("p");
-       details.textContent =
-           card.set_name + " #" + card.number + " - $" +
-           (Number(card.market_price) || 0).toFixed(2);
-       details.hidden = true;
-
        const detailsButton = document.createElement("button");
        detailsButton.textContent = "Details";
 
        detailsButton.addEventListener("click", () => {
-           details.hidden = !details.hidden;
+           sessionStorage.setItem(
+               "selectedPokemonCard",
+               JSON.stringify({ ...card, image_url: image.src })
+           );
+
+           window.location.href = "cardDetails.html";
        });
 
        const removeButton = document.createElement("button");
@@ -82,11 +81,10 @@ function displayCollection() {
            displayCollection();
        });
 
-       cardElement.append(name, image, detailsButton, details, removeButton);
+       cardElement.append(name, image, detailsButton, removeButton);
        collectionContainer.appendChild(cardElement);
    });
 }
 
 // Display collection when page loads
 displayCollection();
-
