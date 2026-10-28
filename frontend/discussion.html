@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,15 @@
     <link rel="stylesheet" href="style.css">
 
 </head>
+
 <body>
-      <header class="site-header">
+    <header class="site-header">
         <div class="header-content">
             <nav class="site-nav">
-                <a href="homePage.html">Search Cards</a>
-                <a href="collection.html">My Collection</a>
-                <a href="discussion.html">Discussion</a>
+                <a href="homePage.html">Home</a>
+                <a href="collection.html">Portfolio</a>
+                <a href="marketPlace.html">Marketplace</a>
+                <a href="discussion.html">Discussion Board</a>
                 <a href="index.html" id="logout-link">Log Out</a>
             </nav>
         </div>
@@ -30,10 +33,12 @@
 
             <form id="post-form" class="board-form" hidden>
                 <label for="post-title">Title</label>
-                <input type="text" id="post-title" maxlength="150" placeholder="e.g. Is a PSA 9 Charizard worth grading?" required>
+                <input type="text" id="post-title" maxlength="150"
+                    placeholder="e.g. Is a PSA 9 Charizard worth grading?" required>
 
                 <label for="post-body">Description</label>
-                <textarea id="post-body" rows="6" maxlength="5000" placeholder="What do you want to talk about?" required></textarea>
+                <textarea id="post-body" rows="6" maxlength="5000" placeholder="What do you want to talk about?"
+                    required></textarea>
 
                 <div class="form-actions">
                     <button type="submit" class="board-button">Post</button>
@@ -70,4 +75,5 @@
     </main>
     <script src="discussion.js"></script>
 </body>
+
 </html>
