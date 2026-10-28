@@ -61,6 +61,14 @@ function displayCollection() {
        details.textContent =
            card.set_name + " #" + card.number + " - $" +
            (Number(card.market_price) || 0).toFixed(2);
+       details.hidden = true;
+
+       const detailsButton = document.createElement("button");
+       detailsButton.textContent = "Details";
+
+       detailsButton.addEventListener("click", () => {
+           details.hidden = !details.hidden;
+       });
 
        const removeButton = document.createElement("button");
        removeButton.textContent = "Remove";
@@ -74,10 +82,11 @@ function displayCollection() {
            displayCollection();
        });
 
-       cardElement.append(name, image, details, removeButton);
+       cardElement.append(name, image, detailsButton, details, removeButton);
        collectionContainer.appendChild(cardElement);
    });
 }
 
 // Display collection when page loads
 displayCollection();
+
