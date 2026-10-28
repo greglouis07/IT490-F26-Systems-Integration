@@ -32,7 +32,8 @@ function displayCollection() {
     collectionContainer.innerHTML = "";
 
     if (collection.length === 0) {
-        collectionContainer.textContent = "No Pokémon cards added yet.";
+        collectionContainer.textContent =
+            "No Pokémon cards added yet.";
     }
 
     collection.forEach(card => {
@@ -41,7 +42,9 @@ function displayCollection() {
         const name = document.createElement("h3");
         name.textContent = card.name + " x" + card.quantity;
 
+
         const image = document.createElement("img");
+
         image.src = card.image
             ? (card.image.includes("assets.tcgdex.net")
                 ? card.image + "/low.webp"
@@ -51,6 +54,12 @@ function displayCollection() {
         image.alt = card.name;
         image.width = 120;
 
+        image.onerror = function () {
+            this.onerror = null;
+            this.src = "https://placehold.co/180x250?text=No+Image";
+        };
+
+        // Use a placeholder if the image URL fails to load
         image.onerror = function () {
             this.onerror = null;
             this.src = "https://placehold.co/180x250?text=No+Image";
@@ -68,6 +77,7 @@ function displayCollection() {
         collectionContainer.appendChild(cardElement);
     });
 
+    // Real prices will be connected in a later step.
     collectionValue.textContent = "$0.00";
 }
 
@@ -76,6 +86,7 @@ async function searchCards(query) {
     searchResults.innerHTML = "";
 
     try {
+
         const response = await fetch("cardSearch.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -84,6 +95,7 @@ async function searchCards(query) {
         });
 
         const result = await response.json();
+
 
         if (!response.ok || !result.success) {
             throw new Error(result.message || "Could not retrieve cards.");
@@ -106,6 +118,7 @@ async function searchCards(query) {
             name.textContent = card.name;
 
             const image = document.createElement("img");
+
             image.src = card.image_url ||
                 "https://placehold.co/180x250?text=No+Image";
 
@@ -121,10 +134,7 @@ async function searchCards(query) {
             addButton.textContent = "Add to Collection";
 
             addButton.addEventListener("click", async () => {
-                const data = await collectionRequest(
-                    "add_to_collection",
-                    card.id
-                );
+                const data = await collectionRequest("add_to_collection", card.id);
 
                 if (!data.success) {
                     alert(data.message || "Could not add the card.");
@@ -134,14 +144,8 @@ async function searchCards(query) {
                 loadCollection();
             });
 
-            // Open card details when the card itself is clicked
-            cardElement.style.cursor = "pointer";
-
-            cardElement.addEventListener("click", event => {
-                if (event.target.closest("button")) {
-                    return;
-                }
-
+            // Open the card details page when clicking a Pokemon card
+            cardElement.addEventListener("click", () => {
                 sessionStorage.setItem(
                     "selectedPokemonCard",
                     JSON.stringify(card)
@@ -150,14 +154,37 @@ async function searchCards(query) {
                 window.location.href = "cardDetails.html";
             });
 
+            // Prevent the Add to Collection button from opening card details
+            addButton.addEventListener("click", event => {
+                event.stopPropagation();
+            });
+
+            // Open the card details page when clicking a Pokemon card
+            cardElement.addEventListener("click", () => {
+                sessionStorage.setItem(
+                    "selectedPokemonCard",
+                    JSON.stringify(card)
+                );
+
+                window.location.href = "cardDetails.html";
+            });
+
+            // Prevent the Add to Collection button from opening card details
+            addButton.addEventListener("click", event => {
+                event.stopPropagation();
+            });
+
             cardElement.append(name, image, addButton);
             searchResults.appendChild(cardElement);
         });
 
     } catch (error) {
-        searchMessage.textContent = `Search failed: ${error.message}`;
+        searchMessage.textContent =
+            `Search failed: ${error.message}`;
+
         console.error("Card search error:", error);
     }
+
 }
 
 searchForm.addEventListener("submit", event => {
@@ -216,8 +243,10 @@ async function logout() {
     }
 }
 
+// validate session on homePage
 validateSession();
 
+// Handle logout link
 document.getElementById("logout-link").addEventListener("click", function (event) {
     event.preventDefault();
     logout();

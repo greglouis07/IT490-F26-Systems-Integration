@@ -24,6 +24,28 @@ function saveWallet() {
 
 // Display wallet when the page loads
 displayWallet();
+// Communicate with the shared Portfolio collection
+async function marketplaceCollectionRequest(action, cardId = null) {
+    const response = await fetch("collection.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({
+            action: action,
+            cardId: cardId
+        })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+        throw new Error(data.message || "Collection request failed.");
+    }
+
+    return data;
+}
 
 // Load cards purchased through the Marketplace
 let purchasedCards = JSON.parse(
@@ -121,6 +143,17 @@ function displaySellCards() {
 // Display purchased cards when the page loads
 displaySellCards();
 
+// Test loading the user's Portfolio cards from MySQL
+async function loadPortfolioCards() {
+    try {
+        const data = await marketplaceCollectionRequest("get_collection");
+        console.log("Portfolio cards:", data.collection);
+    } catch (error) {
+        console.error("Failed to load Portfolio:", error.message);
+    }
+}
+
+loadPortfolioCards();
 // Search for Pokemon cards available to purchase
 async function searchMarketplaceCards(query) {
     marketplaceMessage.textContent = "Searching...";
