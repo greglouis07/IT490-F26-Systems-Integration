@@ -8,6 +8,7 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 require_once(__DIR__ . '/pokemonData.php');
+require_once(__DIR__ . '/mailService.php'); //sendEmail() for send_email
 
 function requestProcessor($request)
 {
@@ -54,6 +55,30 @@ function requestProcessor($request)
                 );
             }
             return cardSearch($request['cardName']);
+
+
+        //send_email sends an email via mailService.php **DMZ ONLY NEVER FROM FRONTEND**
+        //fields required: toEmail, subject, body. Code 2: bad field, Code 9: send failure
+        case "send_email":
+            if (!isset($request['toEmail'], $request['subject'], $request['body'])
+            || !is_string($request['toEmail'])
+            || !is_string($request['subject'])
+            || !is_string($request['body'])
+            || !filter_var($request['toEmail'], FILTER_VALIDATE_EMAIL)
+            || trim($request['subject']) === ""
+            || trim($request['body']) === "")
+
+
+            {
+                return array(
+                    "success" => false,
+                    "message" => "Missing or invalid toEmail, subject and or body",
+                    "code" => 2
+                );
+            }
+
+            //sendEmail() returns contract array (success or code 9)
+            return sendEmail($request['toEmail'], $request['subject'], $request['body']);
 
         default:
             return array(
