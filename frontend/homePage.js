@@ -8,216 +8,227 @@ const collectionValue = document.getElementById("collection-value");
 let collection = [];
 
 async function collectionRequest(action, cardId) {
-   const response = await fetch("collection.php", {
-       method: "POST",
-       headers: { "Content-Type": "application/json" },
-       credentials: "same-origin",
-       body: JSON.stringify({ action, cardId })
-   });
+    const response = await fetch("collection.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ action, cardId })
+    });
 
-   return response.json();
+    return response.json();
 }
 
 async function loadCollection() {
-   const data = await collectionRequest("get_collection");
+    const data = await collectionRequest("get_collection");
 
-   if (data.success) {
-       collection = data.collection;
-   }
+    if (data.success) {
+        collection = data.collection;
+    }
 
-   displayCollection();
+    displayCollection();
 }
 
 function displayCollection() {
-   collectionContainer.innerHTML = "";
+    collectionContainer.innerHTML = "";
 
-   if (collection.length === 0) {
-       collectionContainer.textContent =
-           "No Pokémon cards added yet.";
-   }
+    if (collection.length === 0) {
+        collectionContainer.textContent =
+            "No Pokémon cards added yet.";
+    }
 
-   collection.forEach(card => {
-       const cardElement = document.createElement("div");
+    collection.forEach(card => {
+        const cardElement = document.createElement("div");
 
-       const name = document.createElement("h3");
-       name.textContent = card.name + " x" + card.quantity;
+        const name = document.createElement("h3");
+        name.textContent = card.name + " x" + card.quantity;
 
+        const image = document.createElement("img");
 
-       const image = document.createElement("img");
+        image.src = card.image
+            ? (card.image.includes("assets.tcgdex.net")
+                ? card.image + "/low.webp"
+                : card.image)
+            : "https://placehold.co/180x250?text=No+Image";
 
-       image.src = card.image
-           ? (card.image.includes("assets.tcgdex.net")
-               ? card.image + "/low.webp"
-               : card.image)
-           : "https://placehold.co/180x250?text=No+Image";
+        image.alt = card.name;
+        image.width = 120;
 
-       image.alt = card.name;
-       image.width = 120;
+        image.onerror = function () {
+            this.onerror = null;
+            this.src = "https://placehold.co/180x250?text=No+Image";
+        };
 
-       image.onerror = function () {
-           this.onerror = null;
-           this.src = "https://placehold.co/180x250?text=No+Image";
-       };
+        const removeButton = document.createElement("button");
+        removeButton.textContent = "Remove";
 
-       // Use a placeholder if the image URL fails to load
-       image.onerror = function () {
-           this.onerror = null;
-           this.src = "https://placehold.co/180x250?text=No+Image";
-       };
+        removeButton.addEventListener("click", async () => {
+            await collectionRequest("remove_from_collection", card.id);
+            loadCollection();
+        });
 
-       const removeButton = document.createElement("button");
-       removeButton.textContent = "Remove";
+        cardElement.append(name, image, removeButton);
+        collectionContainer.appendChild(cardElement);
+    });
 
-       removeButton.addEventListener("click", async () => {
-           await collectionRequest("remove_from_collection", card.id);
-           loadCollection();
-       });
-
-       cardElement.append(name, image, removeButton);
-       collectionContainer.appendChild(cardElement);
-   });
-
-   // Real prices will be connected in a later step.
-   collectionValue.textContent = "$0.00";
+    // Real prices will be connected in a later step.
+    collectionValue.textContent = "$0.00";
 }
 
 async function searchCards(query) {
-   searchMessage.textContent = "Searching...";
-   searchResults.innerHTML = "";
+    searchMessage.textContent = "Searching...";
+    searchResults.innerHTML = "";
 
-   try {
+    try {
+        const response = await fetch("cardSearch.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({ cardName: query })
+        });
 
-       const response = await fetch("cardSearch.php", {
-           method: "POST",
-           headers: { "Content-Type": "application/json" },
-           credentials: "same-origin",
-           body: JSON.stringify({ cardName: query })
-       });
+        const result = await response.json();
 
-       const result = await response.json();
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Could not retrieve cards.");
+        }
 
+        if (!Array.isArray(result.data)) {
+            throw new Error("Invalid card search response.");
+        }
 
-       if (!response.ok || !result.success) {
-           throw new Error(result.message || "Could not retrieve cards.");
-       }
+        const cards = result.data;
 
-       if (!Array.isArray(result.data)) {
-           throw new Error("Invalid card search response.");
-       }
+        searchMessage.textContent = cards.length
+            ? `Found ${cards.length} cards.`
+            : "No Pokémon cards found.";
 
-       const cards = result.data;
+        cards.slice(0, 30).forEach(card => {
+            const cardElement = document.createElement("div");
 
-       searchMessage.textContent = cards.length
-           ? `Found ${cards.length} cards.`
-           : "No Pokémon cards found.";
+            const name = document.createElement("h3");
+            name.textContent = card.name;
 
-       cards.slice(0, 30).forEach(card => {
-           const cardElement = document.createElement("div");
+            const image = document.createElement("img");
 
-           const name = document.createElement("h3");
-           name.textContent = card.name;
+            image.src = card.image_url ||
+                "https://placehold.co/180x250?text=No+Image";
 
-           const image = document.createElement("img");
+            image.alt = card.name;
+            image.width = 120;
 
-           image.src = card.image_url ||
-               "https://placehold.co/180x250?text=No+Image";
+            image.onerror = function () {
+                this.onerror = null;
+                this.src = "https://placehold.co/180x250?text=No+Image";
+            };
 
-           image.alt = card.name;
-           image.width = 120;
+            const addButton = document.createElement("button");
+            addButton.textContent = "Add to Collection";
 
-           image.onerror = function () {
-               this.onerror = null;
-               this.src = "https://placehold.co/180x250?text=No+Image";
-           };
+            addButton.addEventListener("click", async () => {
+                const data = await collectionRequest(
+                    "add_to_collection",
+                    card.id
+                );
 
-           const addButton = document.createElement("button");
-           addButton.textContent = "Add to Collection";
+                if (!data.success) {
+                    alert(data.message || "Could not add the card.");
+                    return;
+                }
 
-           addButton.addEventListener("click", async () => {
-               const data = await collectionRequest("add_to_collection", card.id);
+                loadCollection();
+            });
 
-               if (!data.success) {
-                   alert(data.message || "Could not add the card.");
-                   return;
-               }
+            // Open the card details page when the card is clicked
+            cardElement.style.cursor = "pointer";
 
-               loadCollection();
-           });
+            cardElement.addEventListener("click", event => {
+                // Keep the Add to Collection button working normally
+                if (event.target.closest("button")) {
+                    return;
+                }
 
-           cardElement.append(name, image, addButton);
-           searchResults.appendChild(cardElement);
-       });
+                sessionStorage.setItem(
+                    "selectedPokemonCard",
+                    JSON.stringify(card)
+                );
 
-} catch (error) {
-   searchMessage.textContent =
-       `Search failed: ${error.message}`;
+                window.location.href = "cardDetails.html";
+            });
 
-   console.error("Card search error:", error);
-}
+            cardElement.append(name, image, addButton);
+            searchResults.appendChild(cardElement);
+        });
 
+    } catch (error) {
+        searchMessage.textContent =
+            `Search failed: ${error.message}`;
+
+        console.error("Card search error:", error);
+    }
 }
 
 searchForm.addEventListener("submit", event => {
-   event.preventDefault();
+    event.preventDefault();
 
-   const query = searchInput.value.trim();
+    const query = searchInput.value.trim();
 
-   if (query) {
-       searchCards(query);
-   }
+    if (query) {
+        searchCards(query);
+    }
 });
 
 loadCollection();
 
 // Check if the user has a valid session
 async function validateSession() {
-   try {
-       const response = await fetch("auth.php", {
-           method: "POST",
-           headers: { "Content-Type": "application/json" },
-           credentials: "same-origin",
-           body: JSON.stringify({ type: "validate_session" })
-       });
+    try {
+        const response = await fetch("auth.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({ type: "validate_session" })
+        });
 
-       const data = await response.json();
+        const data = await response.json();
 
-       if (!response.ok || !data.success) {
-           window.location.replace("index.html");
-       }
-   } catch (error) {
-       console.error("Session validation failed:", error);
-       window.location.replace("index.html");
-   }
+        if (!response.ok || !data.success) {
+            window.location.replace("index.html");
+        }
+    } catch (error) {
+        console.error("Session validation failed:", error);
+        window.location.replace("index.html");
+    }
 }
 
 // Log the user out
 async function logout() {
-   try {
-       const response = await fetch("auth.php", {
-           method: "POST",
-           headers: { "Content-Type": "application/json" },
-           credentials: "same-origin",
-           body: JSON.stringify({ type: "logout" })
-       });
+    try {
+        const response = await fetch("auth.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({ type: "logout" })
+        });
 
-       const data = await response.json();
+        const data = await response.json();
 
-       if (!response.ok || !data.success) {
-           console.error("Logout failed:", data.message);
-           return;
-       }
+        if (!response.ok || !data.success) {
+            console.error("Logout failed:", data.message);
+            return;
+        }
 
-       window.location.replace("index.html");
-   } catch (error) {
-       console.error("Logout error:", error);
-   }
+        window.location.replace("index.html");
+    } catch (error) {
+        console.error("Logout error:", error);
+    }
 }
 
-// validate session on homePage
+// Validate session on homePage
 validateSession();
 
 // Handle logout link
 document.getElementById("logout-link").addEventListener("click", function (event) {
-   event.preventDefault();
-   logout();
+    event.preventDefault();
+    logout();
 });
+
