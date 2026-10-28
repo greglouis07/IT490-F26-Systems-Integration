@@ -32,8 +32,7 @@ function displayCollection() {
     collectionContainer.innerHTML = "";
 
     if (collection.length === 0) {
-        collectionContainer.textContent =
-            "No Pokémon cards added yet.";
+        collectionContainer.textContent = "No Pokémon cards added yet.";
     }
 
     collection.forEach(card => {
@@ -43,7 +42,6 @@ function displayCollection() {
         name.textContent = card.name + " x" + card.quantity;
 
         const image = document.createElement("img");
-
         image.src = card.image
             ? (card.image.includes("assets.tcgdex.net")
                 ? card.image + "/low.webp"
@@ -70,7 +68,6 @@ function displayCollection() {
         collectionContainer.appendChild(cardElement);
     });
 
-    // Real prices will be connected in a later step.
     collectionValue.textContent = "$0.00";
 }
 
@@ -109,7 +106,6 @@ async function searchCards(query) {
             name.textContent = card.name;
 
             const image = document.createElement("img");
-
             image.src = card.image_url ||
                 "https://placehold.co/180x250?text=No+Image";
 
@@ -138,11 +134,10 @@ async function searchCards(query) {
                 loadCollection();
             });
 
-            // Open the card details page when the card is clicked
+            // Open card details when the card itself is clicked
             cardElement.style.cursor = "pointer";
 
             cardElement.addEventListener("click", event => {
-                // Keep the Add to Collection button working normally
                 if (event.target.closest("button")) {
                     return;
                 }
@@ -160,9 +155,7 @@ async function searchCards(query) {
         });
 
     } catch (error) {
-        searchMessage.textContent =
-            `Search failed: ${error.message}`;
-
+        searchMessage.textContent = `Search failed: ${error.message}`;
         console.error("Card search error:", error);
     }
 }
@@ -223,12 +216,9 @@ async function logout() {
     }
 }
 
-// Validate session on homePage
 validateSession();
 
-// Handle logout link
 document.getElementById("logout-link").addEventListener("click", function (event) {
     event.preventDefault();
     logout();
 });
-
