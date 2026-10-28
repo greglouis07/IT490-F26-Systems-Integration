@@ -1,4 +1,5 @@
--- glb9 create sessions table for aleens backend sudo mysql DB_NAME < backend/sessions.sql
+-- glb9 run on the database machine, sudo mysql DB_NAME < backend/database.sql
+
 CREATE TABLE IF NOT EXISTS sessions (
     sessionId CHAR(64) NOT NULL,
     user_id INT NOT NULL,
@@ -60,4 +61,15 @@ CREATE TABLE IF NOT EXISTS watchlist (
     UNIQUE KEY uniq_watchlist_user_card (user_id, card_id),
     CONSTRAINT fk_watchlist_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT fk_watchlist_card FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS collection (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    card_id INT NOT NULL, -- TCG API card id from cards
+    quantity INT NOT NULL DEFAULT 1,
+    added_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_collection_user_card (user_id, card_id),
+    CONSTRAINT fk_collection_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_collection_card FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE
 );

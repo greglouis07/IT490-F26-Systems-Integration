@@ -108,6 +108,17 @@ async function searchCards(query) {
 
         cards.slice(0, 30).forEach(card => {
             const cardElement = document.createElement("div");
+            cardElement.style.cursor = "pointer";
+
+            cardElement.addEventListener("click", (event) => {
+                event.stopPropagation(); // Prevent the click from bubbling up to the cardElement
+                sessionStorage.setItem(
+                    "selectedPokemonCard",
+                    JSON.stringify(card)
+                );
+
+                window.location.href = "cardDetails.html";
+            });
 
             const name = document.createElement("h3");
             name.textContent = card.name;
@@ -130,7 +141,8 @@ async function searchCards(query) {
             const addButton = document.createElement("button");
             addButton.textContent = "Add to Collection";
 
-            addButton.addEventListener("click", () => {
+            addButton.addEventListener("click", (event) => {
+                event.stopPropagation(); // Prevent the click from bubbling up to the cardElement
                 const alreadyAdded = collection.some(
                     item => item.id === card.id
                 );
@@ -159,13 +171,13 @@ async function searchCards(query) {
             searchResults.appendChild(cardElement);
         });
 
-    
-} catch (error) {
-    searchMessage.textContent =
-        `Search failed: ${error.message}`;
 
-    console.error("Card search error:", error);
-}
+    } catch (error) {
+        searchMessage.textContent =
+            `Search failed: ${error.message}`;
+
+        console.error("Card search error:", error);
+    }
 
 }
 

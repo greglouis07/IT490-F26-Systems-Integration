@@ -444,7 +444,155 @@ function doCreateReply($sessionId, $postId, $body)
  
     return array("success" => true, "message" => "Reply posted");
 }
- 
+
+//glb9 watchlist handlers: add a card, change target price of card
+function doAddWatch($sessionId, $cardId, $targetPrice)
+{
+    if (!is_numeric($cardId) || !is_numeric($targetPrice))
+        return array("success" => false, "message" => "Invalid watchlist entry", "code" => 2);
+
+    $cardId = (int) $cardId;
+    $targetPrice = round((float) $targetPrice, 2);
+
+    if ($cardId <= 0 || $targetPrice <= 0 || $targetPrice > 99999999.99)
+        return array("success" => false, "message" => "Invalid card or target price", "code" => 2);
+
+    $mysqli = dbConnect();
+    $user = sessionUser($mysqli, $sessionId);
+    if (!$user) 
+    {
+        mysqli->close(); return badSession();
+    }
+
+    $stmt = $mysqli->prepare("SELECT id FROM cards WHERE id = ?");
+    $stmt->bind_param("i", $cardId);
+    $stmt->execute();
+    $exists = $stmt->get_result()-fetch_assoc();
+    $stmt->close();
+
+    if(!$exists)
+    {
+        $mysqli->close();
+        return array("success" => false, "message" => "Card not found", "code" => 7);
+    }
+
+    //glb9 update price if its being watched, reset alert
+    $stmt = $mysqli->prepare(
+        "INSERT INTO watchlist (user_id, card_id, target_price) VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE target_price = VALUES(target_price), alerted_at = NULL"
+    );
+    $stmt->bind_param("iid", $user['id'], $cardId, $targetPrice);
+    $stmt->execute();
+    $stmt->close();
+    $mysqli->close();
+
+    return array("success" => true, "message" => "Added to watchlist");
+}
+
+//glb9 every card and current price
+function doGetWatchlist($sessionId)
+{
+    $mysqli = dbConnect();
+    $user = sessionUser($mysqli, $sessionId);
+    if (!$user) { $mysqli->close(); return badSession(); }
+
+    $stmt = $mysqli->prepare(
+        "SELECT w.card_id, c.name, c.set_name, c.number, c.image_url,
+                c.market_price, w.target_price, w.alerted_at, w.created_at
+         FROM watchlist w
+         JOIN cards c ON c.id = w.card_id
+         WHERE w.user_id = ?
+         ORDER BY w.created_at DESC"
+    );
+    $stmt->bind_param("i", $user['id']);
+    $stmt->execute();
+    $watchlist = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    $mysqli->close();
+
+    return array("success" => true, "message" => "Watchlist loaded", "watchlist" => $watchlist);
+}
+
+//glb9 watchlist: stop watching a card
+function doRemoveWatch($sessionId, $cardId)
+{
+    if (!is_numeric($cardId) || (int) $cardId <= 0)
+        return array("success" => false, "message" => "Invalid card", "code" => 2);
+
+    $cardId = (int) $cardId;
+
+    $mysqli = dbConnect();
+    $user = sessionUser($mysqli, $sessionId);
+    if (!$user) { $mysqli->close(); return badSession(); }
+
+    $stmt = $mysqli->prepare("DELETE FROM watchlist WHERE user_id = ? AND card_id = ?");
+    $stmt->bind_param("ii", $user['id'], $cardId);
+    $stmt->execute();
+    $removed = $stmt->affected_rows;
+    $stmt->close();
+    $mysqli->close();
+
+    if ($removed === 0)
+        return array("success" => false, "message" => "Card is not on your watchlist", "code" => 7);
+
+    return array("success" => true, "message" => "Removed from watchlist");
+}
+
+//glb9 card search: ask the DMZ, save the cards, send the same answer back
+function doCardSearch($cardName)
+{
+    if (!is_string($cardName) || trim($cardName) === "")
+        return array("success" => false, "message" => "Missing cardName", "code" => 2);
+
+    //glb9 same timeout as cardSearch.php so a down DMZ can't freeze the consumer
+    ini_set("amqp.read_timeout", "5");
+    $client = new rabbitMQClient("githappensRabbitMQ.ini", "dmzServer");
+    $response = $client->send_request(array("type" => "card_search", "cardName" => trim($cardName)));
+
+    if (!is_array($response) || empty($response['success']) || !isset($response['data']) || !is_array($response['data']))
+        return $response;
+
+    //glb9 save every card so watch and collection can find
+    try
+    {
+        $mysqli = dbConnect();
+        $stmt = $mysqli->prepare(
+            "INSERT INTO cards (id, name, clean_name, set_name, number, rarity, printing, image_url, market_price, market_price_as_of)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE market_price = VALUES(market_price), market_price_as_of = VALUES(market_price_as_of)"
+        );
+
+        foreach ($response['data'] as $card)
+        {
+            if (!isset($card['id'], $card['name'])) continue;
+
+            $id = (int) $card['id'];
+            $name = $card['name'];
+            $cleanName = $card['clean_name'] ?? strtolower($name);
+            $setName = $card['set_name'] ?? null;
+            $number = $card['number'] ?? null;
+            $rarity = $card['rarity'] ?? null;
+            $printing = $card['printing'] ?? null;
+            $imageUrl = $card['image_url'] ?? null;
+            $marketPrice = $card['market_price'] ?? null;
+            $priceDate = $card['market_price_as_of'] ?? null;
+
+            $stmt->bind_param("isssssssds", $id, $name, $cleanName, $setName, $number,
+                $rarity, $printing, $imageUrl, $marketPrice, $priceDate);
+            $stmt->execute();
+        }
+
+        $stmt->close();
+        $mysqli->close();
+    }
+    catch (Throwable $e)
+    {
+        echo "card save failed: " . $e->getMessage() . PHP_EOL;
+    }
+
+    return $response;
+}
+
 function requestProcessor($request)
 {
     echo "received request" . PHP_EOL;
@@ -540,13 +688,33 @@ function requestProcessor($request)
                 $request['title'] ?? "",
                 $request['body'] ?? ""
             );
- 
+
         case "create_reply":
             return doCreateReply(
                 $request['sessionId'] ?? "",
                 $request['postId'] ?? 0,
                 $request['body'] ?? ""
             );
+
+        //glb9 watchlist requests
+        case "add_watch":
+            return doAddWatch(
+                $request['sessionId'] ?? "",
+                $request['cardId'] ?? 0,
+                $request['targetPrice'] ?? 0
+            );
+
+        case "get_watchlist":
+            return doGetWatchlist($request['sessionId'] ?? "");
+
+        case "remove_watch":
+            return doRemoveWatch(
+                $request['sessionId'] ?? "",
+                $request['cardId'] ?? 0
+            );
+
+        case "card_search":
+            return doCardSearch($request['cardName'] ?? "");    
         
         //glb9
         default:

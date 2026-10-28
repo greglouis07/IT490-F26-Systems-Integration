@@ -81,6 +81,9 @@ try {
         exit;
     }
 
+    //glb9 FIXING CLASH WITH CARD SEARCH close session client
+    unset($authClient);
+
 } catch (Throwable $error) {
     error_log("Card search session error: " . $error->getMessage());
 
@@ -105,8 +108,8 @@ $request = [
 ini_set("amqp.read_timeout", "10");
 
 try {
-    // Connect to the DMZ server through RabbitMQ
-    $client = new rabbitMQClient($configFile, "dmzServer");
+    // Connect to backend, ask DMZ, save cards
+    $client = new rabbitMQClient($configFile, "databaseServer");
 
     // Send the search request
     $response = $client->send_request($request);
