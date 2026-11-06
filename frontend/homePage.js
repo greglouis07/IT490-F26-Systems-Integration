@@ -383,6 +383,107 @@ async function searchCards(query) {
     }
 }
 
+// ---------------------------------------------
+// BROWSE POKEMON CARDS
+// ---------------------------------------------
+
+const browseResults = document.getElementById("browse-results");
+const browseMessage = document.getElementById("browse-message");
+const browseSort = document.getElementById("browse-sort");
+
+// Retrieve saved cards from MySQL through RabbitMQ
+async function loadBrowseCards() {
+    browseMessage.textContent = "Loading Pokémon cards...";
+    browseResults.innerHTML = "";
+
+    try {
+        const response = await fetch("browseCards.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({
+                sort: browseSort.value
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Unable to browse cards.");
+        }
+
+        const cards = data.cards;
+
+        if (!Array.isArray(cards)) {
+            throw new Error("Invalid browse response.");
+        }
+
+        if (cards.length === 0) {
+            browseMessage.textContent = "No cards available yet.";
+            return;
+        }
+
+        browseMessage.textContent =
+            `Showing ${cards.length} Pokémon cards.`;
+
+        cards.forEach(card => {
+            const cardElement = document.createElement("div");
+
+            const name = document.createElement("h3");
+            name.textContent = card.name;
+
+            const image = document.createElement("img");
+
+            image.src = card.image_url
+                ? (card.image_url.includes("assets.tcgdex.net")
+                    ? card.image_url + "/low.webp"
+                    : card.image_url)
+                : "https://placehold.co/180x250?text=No+Image";
+
+            image.alt = card.name;
+            image.width = 120;
+
+            image.onerror = function () {
+                this.onerror = null;
+                this.src = "https://placehold.co/180x250?text=No+Image";
+            };
+
+            const price = document.createElement("p");
+
+            price.textContent = card.market_price != null
+                ? `Market Price: $${Number(card.market_price).toFixed(2)}`
+                : "Price unavailable";
+
+            // Open card details when clicked
+            cardElement.style.cursor = "pointer";
+
+            cardElement.addEventListener("click", () => {
+                sessionStorage.setItem(
+                    "selectedPokemonCard",
+                    JSON.stringify(card)
+                );
+
+                window.location.href = "cardDetails.html";
+            });
+
+            cardElement.append(name, image, price);
+            browseResults.appendChild(cardElement);
+        });
+
+    } catch (error) {
+        browseMessage.textContent =
+            `Unable to load cards: ${error.message}`;
+
+        console.error("Browse cards error:", error);
+    }
+}
+
+// Reload cards when sorting option changes
+browseSort.addEventListener("change", loadBrowseCards);
+
+// Load saved cards when homepage opens
+loadBrowseCards();
+
 
 // ---------------------------------------------
 // HANDLE SEARCH FORM
