@@ -532,3 +532,75 @@ body {
 .card-details-container > a:hover {
     color: #ffcc00;
 }
+
+
+ /*BROWSE POKEMON CARDS SECTION*/
+
+#browse-section {
+    margin: 30px 0;
+}
+
+.browse-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 15px 0 20px;
+}
+
+#browse-sort {
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#browse-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+#browse-results > div {
+    background: #ffffff;
+    color: #1e293b;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#browse-results > div:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+#browse-results img {
+    width: 100%;
+    max-width: 180px;
+    height: 250px;
+    object-fit: contain;
+}
+
+#browse-results h3 {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+#browse-results p {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .browse-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #browse-results {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+    }
+}

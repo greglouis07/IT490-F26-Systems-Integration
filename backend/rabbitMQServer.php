@@ -547,6 +547,70 @@ function doRemoveFromCollection($sessionId, $cardId)
    return array("success" => true, "message" => "Removed from collection");
 }
 
+//BROWSE SAVED CARDS
+
+// ---------------------------------------------
+// BROWSE SAVED POKEMON CARDS
+// ---------------------------------------------
+
+function doBrowseCards($sort)
+{
+    // Only allow supported sorting options
+    $allowedSorts = ["recent", "price_low", "price_high"];
+
+    if (!is_string($sort) || !in_array($sort, $allowedSorts, true)) {
+        return array(
+            "success" => false,
+            "message" => "Invalid browse sort option",
+            "code" => 2
+        );
+    }
+
+    // Match sorting options to safe SQL statements
+    switch ($sort) {
+        case "price_low":
+            $orderBy = "market_price ASC, id ASC";
+            break;
+
+        case "price_high":
+            $orderBy = "market_price DESC, id ASC";
+            break;
+
+        default:
+            $orderBy = "updated_at DESC, id DESC";
+            break;
+    }
+
+    $mysqli = dbConnect();
+
+    $sql = "
+        SELECT id, name, clean_name, set_name, number,
+               rarity, printing, image_url, market_price,
+               market_price_as_of, updated_at
+        FROM cards
+        WHERE image_url IS NOT NULL
+          AND image_url != ''
+    ";
+
+    // Only include priced cards in price sorting
+    if ($sort === "price_low" || $sort === "price_high") {
+        $sql .= " AND market_price IS NOT NULL";
+    }
+
+    $sql .= " ORDER BY $orderBy LIMIT 20";
+
+    $result = $mysqli->query($sql);
+    $cards = $result->fetch_all(MYSQLI_ASSOC);
+
+    $mysqli->close();
+
+    return array(
+        "success" => true,
+        "message" => "Browse cards loaded",
+        "cards" => $cards
+    );
+}
+
 //glb9 card search: ask the DMZ, save the cards, send the same answer back
 function doCardSearch($cardName)
 {
@@ -722,7 +786,8 @@ function requestProcessor($request)
 
        case "remove_from_collection":
            return doRemoveFromCollection($request['sessionId'] ?? "", $request['cardId'] ?? 0);
-
+        case "browse_cards":
+           return doBrowseCards($request['sort'] ?? "recent");
        case "card_search":
            return doCardSearch($request['cardName'] ?? "");
 
