@@ -1,0 +1,15 @@
+[Unit]
+Description=Database listener (rabbitMQServer.php)
+After=network-online.target mysql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=aleen
+WorkingDirectory=/home/aleen/git/IT490-F26-Systems-Integration/backend
+ExecStart=/usr/bin/php /home/aleen/git/IT490-F26-Systems-Integration/backend/rabbitMQServer.php
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
