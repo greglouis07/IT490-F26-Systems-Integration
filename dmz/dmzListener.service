@@ -1,0 +1,14 @@
+[Unit]
+Description = DMZ Listener for external API and email requests.
+After = network-online.target tailscaled.service
+Wants = network-online.target tailscaled.service
+
+[Service] 
+User = rahul
+ExecStart = /usr/bin/php /home/rahul/IT490-F26-Systems-Integration/dmz/dmzServer.php
+WorkingDirectory = /home/rahul/IT490-F26-Systems-Integration
+Restart =  always
+RestartSec =  5
+
+[Install]
+WantedBy =  multi-user.target
