@@ -16,7 +16,7 @@ $apiKey = $apiConfig['pokemon_api']['api_key'];
 //Initializing new cURL session
 $ch = curl_init();
 
-//Set  cURL URL 
+//Set  cURL URL
 curl_setopt($ch, CURLOPT_URL, $apiUrl . '/cards/' . $cardId . '/prices');
 
 //Setting to have cURL return the response in string instead of a direct output.

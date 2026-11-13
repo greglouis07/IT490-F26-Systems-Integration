@@ -56,6 +56,16 @@ function requestProcessor($request)
             }
             return cardSearch($request['cardName']);
 
+        case "get_set_cards":
+	    if (!isset($request['setId'], $request['page']))
+	    {
+		return array(
+		   "success" => false,
+		   "message" => "Missing setId",
+		   "code" => 2
+		);
+	    }
+	    return browseCards($request['setId'], $request['page']);
 
         //send_email sends an email via mailService.php **DMZ ONLY NEVER FROM FRONTEND**
         //fields required: toEmail, subject, body. Code 2: bad field, Code 9: send failure
