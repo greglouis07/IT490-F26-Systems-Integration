@@ -52,6 +52,13 @@ function displayCollection() {
 
     collection.forEach(card => {
         const cardElement = document.createElement("div");
+        // Bootstrap responsive Portfolio grid
+        cardElement.classList.add(
+            "col-12",
+            "col-sm-6",
+            "col-md-4",
+            "col-lg-3"
+        );
 
         const name = document.createElement("h3");
         name.textContent = card.name + " x" + card.quantity;
@@ -143,6 +150,13 @@ function displayWatchlist(watchlist) {
 
     watchlist.forEach(card => {
         const cardElement = document.createElement("div");
+        // Bootstrap responsive Watchlist grid
+        cardElement.classList.add(
+            "col-12",
+            "col-sm-6",
+            "col-md-4",
+            "col-lg-3"
+        );
 
         // Pokemon card name
         const name = document.createElement("h3");
@@ -213,6 +227,161 @@ function displayWatchlist(watchlist) {
 // SEARCH POKEMON CARDS
 // ---------------------------------------------
 
+// Display Pokemon cards without making another API request
+function displaySearchResults(cards) {
+    searchResults.innerHTML = "";
+
+    // Display first 30 search results
+    cards.slice(0, 30).forEach(card => {
+        const cardElement = document.createElement("div");
+
+        // Bootstrap responsive grid
+        cardElement.classList.add(
+            "col-12",
+            "col-sm-6",
+            "col-md-4",
+            "col-lg-3"
+        );
+
+        // ---------------------------------------------
+        // CARD NAME
+        // ---------------------------------------------
+
+        const name = document.createElement("h3");
+        name.textContent = card.name;
+
+        // ---------------------------------------------
+        // CARD IMAGE
+        // ---------------------------------------------
+
+        const image = document.createElement("img");
+
+        image.src = card.image_url ||
+            "https://placehold.co/180x250?text=No+Image";
+
+        image.alt = card.name;
+        image.width = 120;
+
+        image.onerror = function () {
+            this.onerror = null;
+            this.src = "https://placehold.co/180x250?text=No+Image";
+        };
+
+        // ---------------------------------------------
+        // ADD TO COLLECTION BUTTON
+        // ---------------------------------------------
+
+        const addButton = document.createElement("button");
+        addButton.textContent = "Add to Collection";
+
+        addButton.addEventListener("click", async () => {
+            const data = await collectionRequest(
+                "add_to_collection",
+                card.id
+            );
+
+            if (!data.success) {
+                alert(
+                    data.message || "Could not add the card."
+                );
+                return;
+            }
+
+            loadCollection();
+        });
+
+        // ---------------------------------------------
+        // WATCH PRICE BUTTON
+        // ---------------------------------------------
+
+        const watchButton = document.createElement("button");
+        watchButton.textContent = "Watch Price";
+
+        watchButton.addEventListener("click", async () => {
+            const targetPrice = prompt(
+                "Alert me when " +
+                card.name +
+                " is at or below ($):"
+            );
+
+            // User canceled or entered nothing
+            if (
+                targetPrice === null ||
+                targetPrice.trim() === ""
+            ) {
+                return;
+            }
+
+            try {
+                const data = await watchlistRequest(
+                    "add_watch",
+                    card.id,
+                    targetPrice.trim()
+                );
+
+                if (!data.success) {
+                    alert(
+                        data.message ||
+                        "Could not add to watchlist."
+                    );
+                    return;
+                }
+
+                // Refresh watchlist after adding card
+                loadWatchlist();
+
+            } catch (error) {
+                console.error("Watchlist add error:", error);
+                alert("Could not add card to watchlist.");
+            }
+        });
+
+        // ---------------------------------------------
+        // OPEN CARD DETAILS
+        // ---------------------------------------------
+
+        cardElement.style.cursor = "pointer";
+
+        cardElement.addEventListener("click", event => {
+
+            // Don't navigate when a button is clicked
+            if (event.target.closest("button")) {
+                return;
+            }
+
+            // Save the selected Pokemon card
+            sessionStorage.setItem(
+                "selectedPokemonCard",
+                JSON.stringify(card)
+            );
+
+            // Remember that the card was opened from search results
+            sessionStorage.setItem("cardDetailsSource", "search");
+
+            // Open Card Details page
+            window.location.href = "cardDetails.html";
+        });
+
+        // ---------------------------------------------
+        // DISPLAY CARD
+        // ---------------------------------------------
+
+        cardElement.append(
+            name,
+            image,
+            addButton,
+            watchButton
+        );
+
+        searchResults.appendChild(cardElement);
+    });
+}
+
+
+// ---------------------------------------------
+// SEARCH POKEMON CARDS FROM API
+// ---------------------------------------------
+
 async function searchCards(query) {
     searchMessage.textContent = "Searching...";
     searchResults.innerHTML = "";
@@ -220,7 +389,9 @@ async function searchCards(query) {
     try {
         const response = await fetch("cardSearch.php", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json"
+            },
             credentials: "same-origin",
             body: JSON.stringify({
                 cardName: query
@@ -241,139 +412,35 @@ async function searchCards(query) {
 
         const cards = result.data;
 
+        // ---------------------------------------------
+        // SAVE SEARCH RESULTS
+        // ---------------------------------------------
+
+        // Store results so they can be restored later
+        sessionStorage.setItem(
+            "pokemonSearchResults",
+            JSON.stringify(cards)
+        );
+
+        // Store the original search term
+        sessionStorage.setItem(
+            "pokemonSearchQuery",
+            query
+        );
+
+        // ---------------------------------------------
+        // DISPLAY SEARCH MESSAGE
+        // ---------------------------------------------
+
         searchMessage.textContent = cards.length
             ? `Found ${cards.length} cards.`
             : "No Pokémon cards found.";
 
-        // Display first 30 search results
-        cards.slice(0, 30).forEach(card => {
-            const cardElement = document.createElement("div");
+        // ---------------------------------------------
+        // DISPLAY SEARCH RESULTS
+        // ---------------------------------------------
 
-            // Card name
-            const name = document.createElement("h3");
-            name.textContent = card.name;
-
-            // Card image
-            const image = document.createElement("img");
-
-            image.src = card.image_url ||
-                "https://placehold.co/180x250?text=No+Image";
-
-            image.alt = card.name;
-            image.width = 120;
-
-            image.onerror = function () {
-                this.onerror = null;
-                this.src =
-                    "https://placehold.co/180x250?text=No+Image";
-            };
-
-
-            // ---------------------------------------------
-            // ADD TO COLLECTION BUTTON
-            // ---------------------------------------------
-
-            const addButton = document.createElement("button");
-            addButton.textContent = "Add to Collection";
-
-            addButton.addEventListener("click", async () => {
-                const data = await collectionRequest(
-                    "add_to_collection",
-                    card.id
-                );
-
-                if (!data.success) {
-                    alert(
-                        data.message || "Could not add the card."
-                    );
-                    return;
-                }
-
-                loadCollection();
-            });
-
-
-            // ---------------------------------------------
-            // WATCH PRICE BUTTON
-            // ---------------------------------------------
-
-            // glb9 Watch button: asks for target price,
-            // saves it using add_watch
-            const watchButton = document.createElement("button");
-            watchButton.textContent = "Watch Price";
-
-            watchButton.addEventListener("click", async () => {
-                const targetPrice = prompt(
-                    "Alert me when " +
-                    card.name +
-                    " is at or below ($):"
-                );
-
-                // User canceled or entered nothing
-                if (
-                    targetPrice === null ||
-                    targetPrice.trim() === ""
-                ) {
-                    return;
-                }
-
-                try {
-                    const data = await watchlistRequest(
-                        "add_watch",
-                        card.id,
-                        targetPrice.trim()
-                    );
-
-                    if (!data.success) {
-                        alert(
-                            data.message ||
-                            "Could not add to watchlist."
-                        );
-                        return;
-                    }
-
-                    // Refresh watchlist after adding card
-                    loadWatchlist();
-
-                } catch (error) {
-                    console.error("Watchlist add error:", error);
-                    alert("Could not add card to watchlist.");
-                }
-            });
-
-
-            // ---------------------------------------------
-            // OPEN CARD DETAILS
-            // ---------------------------------------------
-
-            // Open details when card itself is clicked
-            cardElement.style.cursor = "pointer";
-
-            cardElement.addEventListener("click", event => {
-                // Don't navigate when a button is clicked
-                if (event.target.closest("button")) {
-                    return;
-                }
-
-                sessionStorage.setItem(
-                    "selectedPokemonCard",
-                    JSON.stringify(card)
-                );
-
-                window.location.href = "cardDetails.html";
-            });
-
-
-            // Display card with BOTH buttons
-            cardElement.append(
-                name,
-                image,
-                addButton,
-                watchButton
-            );
-
-            searchResults.appendChild(cardElement);
-        });
+        displaySearchResults(cards);
 
     } catch (error) {
         searchMessage.textContent =
@@ -428,6 +495,14 @@ async function loadBrowseCards() {
 
         cards.forEach(card => {
             const cardElement = document.createElement("div");
+
+            // Bootstrap responsive grid
+            cardElement.classList.add(
+                "col-12",
+                "col-sm-6",
+                "col-md-4",
+                "col-lg-3"
+            );
 
             const name = document.createElement("h3");
             name.textContent = card.name;
@@ -498,6 +573,58 @@ searchForm.addEventListener("submit", event => {
         searchCards(query);
     }
 });
+
+// ---------------------------------------------
+// RESTORE PREVIOUS POKEMON SEARCH RESULTS
+// ---------------------------------------------
+
+function restoreSearchResults() {
+    // Only restore results when returning from Card Details
+    const source = sessionStorage.getItem("cardDetailsSource");
+
+    if (source !== "search") {
+        return;
+    }
+
+    const savedQuery = sessionStorage.getItem("pokemonSearchQuery");
+    const savedResults = sessionStorage.getItem("pokemonSearchResults");
+
+    if (!savedQuery || !savedResults) {
+        return;
+    }
+
+    try {
+        const cards = JSON.parse(savedResults);
+
+        if (!Array.isArray(cards)) {
+            return;
+        }
+
+        // Restore the original search term
+        searchInput.value = savedQuery;
+
+        // Restore the results without calling the API
+        displaySearchResults(cards);
+
+        // Restore the results message
+        searchMessage.textContent = cards.length
+            ? `Found ${cards.length} cards.`
+            : "No Pokémon cards found.";
+        sessionStorage.removeItem("cardDetailsSource");
+
+        searchResults.scrollIntoView({
+            behavior: "instant",
+            block: "start"
+        });
+
+    } catch (error) {
+        console.error("Unable to restore search results:", error);
+    }
+}
+
+// Restore saved results when the homepage loads
+restoreSearchResults();
+
 
 
 // ---------------------------------------------

@@ -58,7 +58,13 @@ function displaySellCards() {
 
     purchasedCards.forEach(card => {
         const cardElement = document.createElement("div");
-
+        // Bootstrap responsive Sell Cards grid
+        cardElement.classList.add(
+            "col-12",
+            "col-sm-6",
+            "col-md-4",
+            "col-lg-3"
+        );
         const name = document.createElement("h3");
         name.textContent = card.name;
 
@@ -156,7 +162,13 @@ async function searchMarketplaceCards(query) {
 
         cards.slice(0, 30).forEach(card => {
             const cardElement = document.createElement("div");
-
+            // Bootstrap responsive Buy Cards grid
+            cardElement.classList.add(
+                "col-12",
+                "col-sm-6",
+                "col-md-4",
+                "col-lg-3"
+            );
             const name = document.createElement("h3");
             name.textContent = card.name;
 
