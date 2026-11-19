@@ -1,4 +1,3 @@
-
 /* General Page Styling */
 * {
     margin: 0;
@@ -54,12 +53,12 @@ body {
 }
 
 /* Input Groups */
-.input-group {
+.auth-input-group {
     text-align: left;
     margin-bottom: 20px;
 }
 
-.input-group label {
+.auth-input-group label {
     display: block;
     font-size: 14px;
     font-weight: 600;
@@ -68,7 +67,8 @@ body {
 }
 
 /* Username and Password Fields */
-.input-group input {
+.auth-input-group input {
+    display: block;
     width: 100%;
     padding: 12px 14px;
     border: 1px solid #cbd5e1;
@@ -78,7 +78,7 @@ body {
     transition: border-color 0.2s ease;
 }
 
-.input-group input:focus {
+.auth-input-group input:focus {
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
@@ -307,21 +307,35 @@ body {
 
 
 /* Pokemon Search Results Grid */
+/* Bootstrap Responsive Search Results */
 #card-results {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 24px;
     margin-top: 25px;
 }
 
 /* Individual Search Result Cards */
-#card-results > div {
+/* Individual Bootstrap Card Columns */
+#card-results>div {
     background-color: #ffffff;
-    padding: 20px;
+    background-clip: content-box;
     border-radius: 12px;
     text-align: center;
     color: #0f172a;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: none;
+    min-width: 0;
+}
+
+/* Content spacing inside each card */
+#card-results>div>h3 {
+    padding: 20px 12px 0;
+}
+
+#card-results>div>img {
+    padding: 0 12px;
+}
+
+#card-results>div>button {
+    width: calc(100% - 24px);
+    margin: 0 12px 12px;
 }
 
 /* Pokemon Card Images */
@@ -524,17 +538,17 @@ body {
     color: white;
 }
 
-.card-details-container > a {
+.card-details-container>a {
     color: #ffffff;
     text-decoration: underline;
 }
 
-.card-details-container > a:hover {
+.card-details-container>a:hover {
     color: #ffcc00;
 }
 
 
- /*BROWSE POKEMON CARDS SECTION*/
+/*BROWSE POKEMON CARDS SECTION*/
 
 #browse-section {
     margin: 30px 0;
@@ -555,23 +569,37 @@ body {
     cursor: pointer;
 }
 
+/* Bootstrap Responsive Browse Results */
 #browse-results {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 20px;
     margin-top: 20px;
 }
 
-#browse-results > div {
-    background: #ffffff;
+/* Individual Browse Card Columns */
+#browse-results>div {
+    min-width: 0;
     color: #1e293b;
-    border-radius: 12px;
-    padding: 15px;
     text-align: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease;
 }
 
-#browse-results > div:hover {
+/* White card background inside Bootstrap columns */
+#browse-results>div::before {
+    content: "";
+    position: absolute;
+    inset: 0 12px;
+    background: #ffffff;
+    border-radius: 12px;
+    z-index: -1;
+}
+
+#browse-results>div {
+    position: relative;
+    isolation: isolate;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+#browse-results>div:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
@@ -598,9 +626,453 @@ body {
         flex-direction: column;
         align-items: flex-start;
     }
+}
 
-    #browse-results {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+/* ---------------------------------------------
+   RESPONSIVE POKEMON SEARCH FORM
+--------------------------------------------- */
+
+@media (max-width: 480px) {
+    #card-search-form {
+        flex-direction: column;
+        align-items: stretch;
         gap: 12px;
     }
+
+    #pokemon-search {
+        width: 100%;
+        min-width: 0;
+    }
+
+    #card-search-form button {
+        width: 100%;
+    }
+}
+
+/* ---------------------------------------------
+   RESPONSIVE PORTFOLIO CARDS
+--------------------------------------------- */
+
+/* Portfolio Card Columns */
+#my-collection>div {
+    min-width: 0;
+    text-align: center;
+}
+
+/* Card Content */
+#my-collection>div>h3,
+#my-collection>div>img,
+#my-collection>div>button {
+    position: relative;
+}
+
+/* White Card Background */
+#my-collection>div {
+    background: linear-gradient(#ffffff, #ffffff) content-box;
+    border-radius: 12px;
+    color: #1e293b;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+/* Pokemon Card Names */
+#my-collection h3 {
+    font-size: 18px;
+    padding: 15px 12px 0;
+    margin-bottom: 12px;
+}
+
+/* Pokemon Card Images */
+#my-collection img {
+    display: block;
+    width: 100%;
+    max-width: 180px;
+    height: 250px;
+    object-fit: contain;
+    margin: 0 auto 15px;
+    padding: 0 12px;
+}
+
+/* ---------------------------------------------
+   RESPONSIVE PORTFOLIO BUTTONS
+--------------------------------------------- */
+
+/* Both Portfolio Buttons */
+#my-collection button {
+    display: block;
+    width: calc(100% - 24px);
+    margin: 0 12px 12px;
+    padding: 12px;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Details Button */
+#my-collection button:first-of-type {
+    background-color: #2563eb;
+}
+
+#my-collection button:first-of-type:hover {
+    background-color: #1d4ed8;
+}
+
+/* Remove Button */
+#my-collection button:last-of-type {
+    background-color: #dc2626;
+}
+
+#my-collection button:last-of-type:hover {
+    background-color: #b91c1c;
+}
+/* ---------------------------------------------
+   RESPONSIVE WATCHLIST CARDS
+--------------------------------------------- */
+
+/* Watchlist Card Columns */
+#my-watchlist>div {
+    min-width: 0;
+    text-align: center;
+    color: #1e293b;
+    background: linear-gradient(#ffffff, #ffffff) content-box;
+    border-radius: 12px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+/* Pokemon Card Names */
+#my-watchlist h3 {
+    font-size: 18px;
+    padding: 15px 12px 0;
+    margin-bottom: 12px;
+}
+
+/* Pokemon Card Images */
+#my-watchlist img {
+    display: block;
+    width: 100%;
+    max-width: 180px;
+    height: 250px;
+    object-fit: contain;
+    margin: 0 auto 15px;
+    padding: 0 12px;
+}
+
+/* Market Price and Target Price */
+#my-watchlist p {
+    font-size: 14px;
+    padding: 0 12px;
+    margin-bottom: 15px;
+    overflow-wrap: anywhere;
+}
+
+/* Stop Watching Button */
+#my-watchlist button {
+    display: block;
+    width: calc(100% - 24px);
+    margin: 0 12px 12px;
+    padding: 12px;
+    background-color: #dc2626;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#my-watchlist button:hover {
+    background-color: #b91c1c;
+}
+
+/* ---------------------------------------------
+   RESPONSIVE MARKETPLACE SEARCH FORM
+--------------------------------------------- */
+
+#marketplace-search-form {
+    max-width: 700px;
+    margin-top: 20px;
+}
+
+/* Search Input */
+#marketplace-search {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: #ffffff;
+    color: #0f172a;
+}
+
+#marketplace-search:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Search Button */
+#marketplace-search-form button {
+    padding: 14px 20px;
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#marketplace-search-form button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 575.98px) {
+    #marketplace-search-form {
+        margin-top: 15px;
+    }
+}
+
+/* ---------------------------------------------
+   RESPONSIVE MARKETPLACE BUY CARDS
+--------------------------------------------- */
+
+/* Marketplace Card Grid */
+#marketplace-cards {
+    margin-top: 20px;
+}
+
+/* Individual Buy Card Columns */
+#marketplace-cards>div {
+    min-width: 0;
+    text-align: center;
+    color: #1e293b;
+    background: linear-gradient(#ffffff, #ffffff) content-box;
+    border-radius: 12px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+/* Pokemon Card Names */
+#marketplace-cards h3 {
+    font-size: 18px;
+    padding: 15px 12px 0;
+    margin-bottom: 12px;
+}
+
+/* Pokemon Card Images */
+#marketplace-cards img {
+    display: block;
+    width: 100%;
+    max-width: 180px;
+    height: 250px;
+    object-fit: contain;
+    margin: 0 auto 15px;
+    padding: 0 12px;
+}
+
+/* Market Price */
+#marketplace-cards p {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 12px;
+    margin-bottom: 15px;
+}
+
+/* Buy Card Button */
+#marketplace-cards button {
+    display: block;
+    width: calc(100% - 24px);
+    margin: 0 12px 12px;
+    padding: 12px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#marketplace-cards button:hover:not(:disabled) {
+    background-color: #1d4ed8;
+}
+
+/* Disabled Buy Button */
+#marketplace-cards button:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* ---------------------------------------------
+   RESPONSIVE MARKETPLACE SELL CARDS
+--------------------------------------------- */
+
+/* Sell Cards Grid */
+#sell-cards {
+    margin-top: 20px;
+}
+
+/* Individual Sell Card Columns */
+#sell-cards>div {
+    min-width: 0;
+    text-align: center;
+    color: #1e293b;
+    background: linear-gradient(#ffffff, #ffffff) content-box;
+    border-radius: 12px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+/* Pokemon Card Names */
+#sell-cards h3 {
+    font-size: 18px;
+    padding: 15px 12px 0;
+    margin-bottom: 12px;
+}
+
+/* Pokemon Card Images */
+#sell-cards img {
+    display: block;
+    width: 100%;
+    max-width: 180px;
+    height: 250px;
+    object-fit: contain;
+    margin: 0 auto 15px;
+    padding: 0 12px;
+}
+
+/* Market Price */
+#sell-cards p {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 12px;
+    margin-bottom: 15px;
+    overflow-wrap: anywhere;
+}
+
+/* Sell Card Button */
+#sell-cards button {
+    display: block;
+    width: calc(100% - 24px);
+    margin: 0 12px 12px;
+    padding: 12px;
+    background-color: #dc2626;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#sell-cards button:hover {
+    background-color: #b91c1c;
+}
+
+/* ---------------------------------------------
+   RESPONSIVE DISCUSSION BOARD
+--------------------------------------------- */
+
+/* Discussion Board Container */
+.board {
+    width: calc(100% - 32px);
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+}
+
+/* Discussion Header */
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Mobile Discussion Board */
+@media (max-width: 575.98px) {
+
+    .board {
+        margin: 20px auto;
+        padding: 20px 15px;
+    }
+
+    .board-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .board-header h1 {
+        font-size: 26px;
+        overflow-wrap: anywhere;
+    }
+
+    #new-post-button {
+        width: 100%;
+    }
+}
+
+/* ---------------------------------------------
+   RESPONSIVE DISCUSSION BOARD FORMS
+--------------------------------------------- */
+
+/* Prevent form fields from overflowing */
+.board-form {
+    width: 100%;
+    min-width: 0;
+}
+
+.board-form input,
+.board-form textarea {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+/* Allow action buttons to wrap */
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Mobile Form Adjustments */
+@media (max-width: 575.98px) {
+
+    .board-form label {
+        font-size: 14px;
+    }
+
+    .board-form input,
+    .board-form textarea {
+        font-size: 16px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-actions .board-button {
+        width: 100%;
+    }
+
+    #back-button {
+        width: 100%;
+    }
+}
+/* Discussion Board Text Colors */
+.board {
+    color: #ffffff;
+}
+
+.board-header h1,
+.post-full h1,
+#replies-heading {
+    color: #ffffff;
 }

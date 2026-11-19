@@ -5,26 +5,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Git Happens | Pokémon Collection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <header class="site-header">
-        <div class="header-container">
-            <div class="site-brand">
-                <h1> Pokemon Card Collection</h1>
+    <!-- Responsive Bootstrap Navigation -->
+<header class="site-header">
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+
+            <!-- Website Brand -->
+            <a class="navbar-brand fw-bold" href="homePage.html">
+                Pokemon Card Collection
+            </a>
+
+            <!-- Mobile Hamburger Button -->
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation Links -->
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav ms-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="homePage.html">Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="collection.html">Portfolio</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="marketPlace.html">Marketplace</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="discussion.html">Discussion Board</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html" id="logout-link">Log Out</a>
+                    </li>
+
+                </ul>
             </div>
 
-            <nav class="site-nav">
-                <a href="homePage.html">Home</a>
-                <a href="collection.html">Portfolio</a>
-                <a href="marketPlace.html">Marketplace</a>
-                <a href="discussion.html">Discussion Board</a>
-                <a href="index.html" id="logout-link">Log Out</a>
-            </nav>
         </div>
-    </header>
+    </nav>
+</header>
     <main class="homepage-container">
         <!-- Search Section -->
         <section>
@@ -36,10 +73,10 @@
             </form>
 
             <p id="search-message"></p>
-            <div id="card-results"></div>
+            <div id="card-results" class="row g-3"></div>
         </section>
 
-        //Browse Pokemon Cards
+        <!--Browse Pokemon Cards-->
         <section id="browse-section">
             <h2>Browse Pokémon Cards</h2>
             <p>Explore Pokémon cards saved in our database.</p>
@@ -56,25 +93,26 @@
 
             <p id="browse-message">Loading Pokémon cards...</p>
 
-            <div id="browse-results"></div>
+            <div id="browse-results" class="row g-3"></div>
         </section>
 
         <!-- My Collection -->
         <section id="collection-section">
             <h2>Portfolio</h2>
-            <div id="my-collection">
+            <div id="my-collection" class="row g-3"></div>
                 <p>No Pokémon cards added yet.</p>
             </div>
         </section>
 
         <section id="watchlist-section">
             <h2>Watchlist</h2>
-            <div id="my-watchlist">
+            <div id="my-watchlist" class="row g-3"></div>
                 <p>No cards on your watchlist yet.</p>
             </div>
         </section>
 
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="homePage.js"></script>
 </body>
